@@ -24,6 +24,12 @@ export function AppRoot({ brand, seed }: { brand: BrandConfig; seed: LabDataset 
   return (
     <BrandProvider brand={brand}>
       <DataProvider brandId={brand.id} seed={seed}>
+        <style>{`
+          @keyframes lab-fade-in {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
         <HashRouter>
           <Routes>
             <Route path="/login" element={<LoginPage />} />

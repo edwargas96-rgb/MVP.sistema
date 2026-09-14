@@ -59,8 +59,8 @@ export const brand: BrandConfig = {
   cores: {
     primaria: "#00A8E0",
     primariaEscura: "#0089B8",
-    fundo: "#F7FAFC",
-    superficie: "#FFFFFF",
+    fundo: "#EDF5FA",
+    superficie: "#E4F1F8",
     texto: "#102F4A",
     textoSecundario: "#637789",
     borda: "#DCE7EF",
@@ -87,4 +87,5 @@ export const brand: BrandConfig = {
     mono: "'Manrope', sans-serif",
   },
   logoPath: "/brand/logo.webp",
+  imagemDestaque: "/brand/logo_lv_dente.png",
 };

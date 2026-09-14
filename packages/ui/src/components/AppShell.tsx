@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Building2,
   CalendarDays,
@@ -104,6 +104,7 @@ export function AppShell({
 }) {
   const { currentUser, logout } = useData();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const items = [...BASE_ITEMS, ...(currentUser?.role === "laboratorio" ? LAB_ITEMS : CLINICA_ITEMS)];
@@ -175,7 +176,11 @@ export function AppShell({
             {acao}
           </div>
         </header>
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+          <div key={location.pathname} className="animate-[lab-fade-in_280ms_ease-out]">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

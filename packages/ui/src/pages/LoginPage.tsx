@@ -26,12 +26,15 @@ export function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2" style={{ fontFamily: "var(--brand-font-body)" }}>
+    <div
+      className="grid min-h-screen animate-[lab-fade-in_420ms_ease-out] lg:grid-cols-2"
+      style={{ fontFamily: "var(--brand-font-body)" }}
+    >
       <div
         className="relative hidden flex-col justify-between p-12 lg:flex"
         style={{ backgroundColor: "var(--brand-sidebar-bg)" }}
       >
-        <Logo size="lg" variant="sidebar" />
+        <Logo size="xl" variant="sidebar" showText={false} />
 
         <div className="max-w-md">
           <h2
@@ -53,10 +56,19 @@ export function LoginPage() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center p-6" style={{ backgroundColor: "var(--brand-bg)" }}>
-        <div className="w-full max-w-sm">
+      <div className="relative flex items-center justify-center overflow-hidden p-6" style={{ backgroundColor: "var(--brand-bg)" }}>
+        {brand.imagemDestaque && (
+          <img
+            src={brand.imagemDestaque}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute top-6 right-6 w-24 opacity-80 sm:w-28 lg:w-32"
+          />
+        )}
+
+        <div className="relative w-full max-w-sm">
           <div className="mb-8 lg:hidden">
-            <Logo size="sm" />
+            <Logo size="lg" showText={false} />
           </div>
 
           <h1 className="text-2xl font-semibold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>

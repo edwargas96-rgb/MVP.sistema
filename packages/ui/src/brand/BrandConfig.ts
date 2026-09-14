@@ -72,5 +72,10 @@ export interface BrandConfig {
    * Until it exists, the UI falls back to a text wordmark using `nome`.
    */
   logoPath: string;
+  /**
+   * Imagem decorativa opcional (ex.: ícone de dente da marca) exibida como
+   * destaque discreto na tela de login. Omitido = nenhuma imagem extra.
+   */
+  imagemDestaque?: string;
   compatibilidades?: string[];
 }
