@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import type { OrderFile } from "../types";
 import { genId } from "../lib/store";
+import { useBrand } from "../brand/BrandProvider";
 
 const ACCEPTED = [".stl", ".ply", ".zip", ".pdf", ".jpg", ".jpeg", ".png"];
 
@@ -13,6 +14,7 @@ export function FileUpload({
   onAdd: (files: OrderFile[]) => void;
   onRemove?: (id: string) => void;
 }) {
+  const brand = useBrand();
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleFiles(list: FileList | null) {
@@ -45,9 +47,12 @@ export function FileUpload({
         }}
       >
         <span className="text-sm font-medium" style={{ color: "var(--brand-text)" }}>
-          Arraste arquivos aqui ou clique para selecionar
+          {brand.textos.uploadTitulo}
         </span>
         <span className="text-xs" style={{ color: "var(--brand-text-secondary)" }}>
+          {brand.textos.uploadSubtitulo}
+        </span>
+        <span className="text-[11px]" style={{ color: "var(--brand-text-secondary)", opacity: 0.7 }}>
           Aceita {ACCEPTED.join(", ")} — envio demonstrativo (não sobe para nenhum servidor)
         </span>
         <input

@@ -4,10 +4,11 @@ import { useData } from "../hooks/DataProvider";
 import { AppShell } from "../components/AppShell";
 import { Card, EmptyState, Input, Select, StatusBadge, UrgentBadge } from "../components/primitives";
 import { formatDate } from "../components/Timeline";
+import { useBrand } from "../brand/BrandProvider";
 import type { OrderStatus } from "../types";
-import { ORDER_STATUS_FLOW } from "../types";
 
 export function OrdensListPage() {
+  const brand = useBrand();
   const { visibleOrders, currentUser, clinicName } = useData();
   const isLab = currentUser?.role === "laboratorio";
   const [busca, setBusca] = useState("");
@@ -41,7 +42,7 @@ export function OrdensListPage() {
         />
         <Select value={status} onChange={(e) => setStatus(e.target.value as OrderStatus | "todas")} className="sm:w-52">
           <option value="todas">Todos os status</option>
-          {ORDER_STATUS_FLOW.map((s) => (
+          {brand.statusFlow.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </Select>

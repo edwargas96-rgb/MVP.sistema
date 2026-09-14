@@ -5,15 +5,20 @@ import { AppShell } from "../components/AppShell";
 import { Button, Card, Input, Label, Select, Textarea } from "../components/primitives";
 import { Odontogram } from "../components/Odontogram";
 import { FileUpload } from "../components/FileUpload";
-import type { OrderFile } from "../types";
+import { useBrand } from "../brand/BrandProvider";
+import type { OrderFile, Prioridade } from "../types";
+
+const PRIORIDADES: Prioridade[] = ["Normal", "Alta", "Urgente"];
 
 export function NovaOrdemPage() {
+  const brand = useBrand();
   const { data, currentUser, addOrder, clinicName } = useData();
   const navigate = useNavigate();
   const isLab = currentUser?.role === "laboratorio";
 
   const [clinicId, setClinicId] = useState(currentUser?.clinicId ?? data.clinics[0]?.id ?? "");
   const [paciente, setPaciente] = useState("");
+  const [idade, setIdade] = useState("");
   const [dentista, setDentista] = useState("");
   const [servico, setServico] = useState(data.catalogs.servicos[0] ?? "");
   const [elementos, setElementos] = useState<number[]>([]);
@@ -22,7 +27,7 @@ export function NovaOrdemPage() {
   const [material, setMaterial] = useState(data.catalogs.materiais[0] ?? "");
   const [cor, setCor] = useState(data.catalogs.coresVita[0] ?? "");
   const [prazo, setPrazo] = useState("");
-  const [urgente, setUrgente] = useState(false);
+  const [prioridade, setPrioridade] = useState<Prioridade>("Normal");
   const [observacoes, setObservacoes] = useState("");
   const [arquivos, setArquivos] = useState<OrderFile[]>([]);
 
@@ -32,6 +37,7 @@ export function NovaOrdemPage() {
     const order = addOrder({
       clinicId,
       paciente,
+      idade: idade || undefined,
       dentista,
       servico,
       elementos,
@@ -40,7 +46,7 @@ export function NovaOrdemPage() {
       material,
       cor,
       prazo,
-      urgente,
+      prioridade,
       observacoes,
       arquivos,
     });
@@ -48,7 +54,7 @@ export function NovaOrdemPage() {
   }
 
   return (
-    <AppShell titulo="Nova ordem de serviço" descricao="Preencha os dados do caso. O número da ordem é gerado automaticamente.">
+    <AppShell titulo={brand.textos.novaOrdemTitulo} descricao={brand.textos.novaOrdemSubtitulo}>
       <form onSubmit={handleSubmit} className="space-y-5">
         <Card className="grid gap-4 p-5 sm:grid-cols-2">
           <div>
@@ -56,7 +62,7 @@ export function NovaOrdemPage() {
             <Input value={`OS-${String(data.orders.length + 1).padStart(4, "0")}`} disabled />
           </div>
           <div>
-            <Label>Clínica</Label>
+            <Label>Clínica ou consultório</Label>
             {isLab ? (
               <Select value={clinicId} onChange={(e) => setClinicId(e.target.value)}>
                 {data.clinics.map((c) => (
@@ -72,11 +78,15 @@ export function NovaOrdemPage() {
             <Input value={paciente} onChange={(e) => setPaciente(e.target.value)} placeholder="Nome do paciente" required />
           </div>
           <div>
+            <Label>Idade</Label>
+            <Input value={idade} onChange={(e) => setIdade(e.target.value)} placeholder="Ex.: 54 anos" />
+          </div>
+          <div>
             <Label>Dentista responsável</Label>
             <Input value={dentista} onChange={(e) => setDentista(e.target.value)} placeholder="Nome do dentista" required />
           </div>
           <div>
-            <Label>Serviço</Label>
+            <Label>Serviço desejado</Label>
             <Select value={servico} onChange={(e) => setServico(e.target.value)}>
               {data.catalogs.servicos.map((s) => (
                 <option key={s} value={s}>{s}</option>
@@ -87,10 +97,18 @@ export function NovaOrdemPage() {
             <Label>Prazo solicitado</Label>
             <Input type="date" value={prazo} onChange={(e) => setPrazo(e.target.value)} required />
           </div>
+          <div>
+            <Label>Prioridade</Label>
+            <Select value={prioridade} onChange={(e) => setPrioridade(e.target.value as Prioridade)}>
+              {PRIORIDADES.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </Select>
+          </div>
         </Card>
 
         <Card className="p-5">
-          <Label>Elementos (odontograma)</Label>
+          <Label>Elementos ou dentes</Label>
           <Odontogram selected={elementos} onChange={setElementos} />
         </Card>
 
@@ -127,16 +145,10 @@ export function NovaOrdemPage() {
               ))}
             </Select>
           </div>
-          <div className="sm:col-span-2 flex items-center gap-2">
-            <input id="urgente" type="checkbox" checked={urgente} onChange={(e) => setUrgente(e.target.checked)} />
-            <label htmlFor="urgente" className="text-sm font-medium text-red-700">
-              Marcar como urgente
-            </label>
-          </div>
         </Card>
 
         <Card className="p-5">
-          <Label>Arquivos (STL, PLY, imagens, documentos)</Label>
+          <Label>Arquivos STL, PLY, fotografias e documentos</Label>
           <FileUpload files={arquivos} onAdd={(f) => setArquivos((prev) => [...prev, ...f])} onRemove={(id) => setArquivos((prev) => prev.filter((f) => f.id !== id))} />
         </Card>
 

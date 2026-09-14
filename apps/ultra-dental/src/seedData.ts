@@ -93,6 +93,7 @@ export const seed: LabDataset = {
       cor: "A2",
       prazo: futureDate(3),
       urgente: true,
+      prioridade: "Urgente",
       observacoes: "Compatível com escaneamento 3Shape. Confirmar passividade da barra antes da estratificação.",
       status: "Em produção",
       arquivos: [
@@ -119,6 +120,7 @@ export const seed: LabDataset = {
       cor: "A1",
       prazo: futureDate(6),
       urgente: false,
+      prioridade: "Normal",
       observacoes: "Recebido via Medit. Paciente busca resultado natural, sem excesso de opacidade.",
       status: "Em prova",
       arquivos: [
@@ -145,6 +147,7 @@ export const seed: LabDataset = {
       cor: "—",
       prazo: futureDate(2),
       urgente: true,
+      prioridade: "Urgente",
       observacoes: "Compatível com planejamento iTero. Cirurgia confirmada — priorizar impressão 3D.",
       status: "Em análise",
       arquivos: [],
@@ -167,6 +170,7 @@ export const seed: LabDataset = {
       cor: "—",
       prazo: futureDate(10),
       urgente: false,
+      prioridade: "Normal",
       observacoes: "Modelo de estudo para planejamento de segunda etapa protética.",
       status: "Recebida",
       arquivos: [],
@@ -188,6 +192,7 @@ export const seed: LabDataset = {
       cor: "A1",
       prazo: pastDate(9),
       urgente: false,
+      prioridade: "Normal",
       observacoes: "Trabalho completo, do escaneamento à entrega — Cerec.",
       status: "Enviada/Entregue",
       arquivos: [

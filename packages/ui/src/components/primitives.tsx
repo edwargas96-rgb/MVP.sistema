@@ -1,5 +1,16 @@
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 import type { OrderStatus } from "../types";
+import { useBrand } from "../brand/BrandProvider";
+
+/** Tom de status calculado pela posição do status no fluxo de produção da marca. */
+export function statusTone(statusFlow: string[], status: OrderStatus): "neutro" | "info" | "alerta" | "sucesso" {
+  const index = statusFlow.indexOf(status);
+  const last = statusFlow.length - 1;
+  if (index === -1) return "neutro";
+  if (index === last) return "sucesso";
+  if (index === 0) return "neutro";
+  return index <= Math.ceil(last / 2) ? "info" : "alerta";
+}
 
 export function Button({
   variant = "primary",
@@ -84,21 +95,20 @@ export function Label({ children }: { children: ReactNode }) {
   );
 }
 
-const STATUS_STYLES: Record<OrderStatus, string> = {
-  "Recebida": "bg-slate-100 text-slate-700 border-slate-200",
-  "Em análise": "bg-blue-50 text-blue-700 border-blue-200",
-  "Em produção": "border-2",
-  "Em prova": "bg-amber-50 text-amber-800 border-amber-200",
-  "Pronta": "bg-emerald-50 text-emerald-700 border-emerald-200",
-  "Enviada/Entregue": "bg-emerald-600 text-white border-emerald-600",
+const TONE_VARS: Record<ReturnType<typeof statusTone>, { bg: string; text: string }> = {
+  neutro: { bg: "var(--brand-status-neutro-bg)", text: "var(--brand-status-neutro-text)" },
+  info: { bg: "var(--brand-status-info-bg)", text: "var(--brand-status-info-text)" },
+  alerta: { bg: "var(--brand-status-alerta-bg)", text: "var(--brand-status-alerta-text)" },
+  sucesso: { bg: "var(--brand-status-sucesso-bg)", text: "var(--brand-status-sucesso-text)" },
 };
 
 export function StatusBadge({ status }: { status: OrderStatus }) {
-  const isEmProducao = status === "Em produção";
+  const brand = useBrand();
+  const tone = TONE_VARS[statusTone(brand.statusFlow, status)];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap ${STATUS_STYLES[status]}`}
-      style={isEmProducao ? { backgroundColor: "color-mix(in srgb, var(--brand-primary) 12%, transparent)", color: "var(--brand-primary)", borderColor: "color-mix(in srgb, var(--brand-primary) 30%, transparent)" } : undefined}
+      className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap"
+      style={{ backgroundColor: tone.bg, color: tone.text, borderColor: `color-mix(in srgb, ${tone.text} 30%, transparent)` }}
     >
       <span className="size-1.5 rounded-full bg-current opacity-70" />
       {status}
@@ -108,7 +118,10 @@ export function StatusBadge({ status }: { status: OrderStatus }) {
 
 export function UrgentBadge() {
   return (
-    <span className="inline-flex items-center rounded-full bg-red-50 border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-700">
+    <span
+      className="inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold"
+      style={{ backgroundColor: "var(--brand-status-erro-bg)", color: "var(--brand-status-erro-text)", borderColor: "color-mix(in srgb, var(--brand-status-erro-text) 30%, transparent)" }}
+    >
       Urgente
     </span>
   );

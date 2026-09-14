@@ -88,6 +88,7 @@ export const seed: LabDataset = {
       cor: "A2",
       prazo: futureDate(4),
       urgente: true,
+      prioridade: "Urgente",
       observacoes: "Barra híbrida para protocolo superior. Verificar passividade antes da fresagem final.",
       status: "Em produção",
       arquivos: [
@@ -115,6 +116,7 @@ export const seed: LabDataset = {
       cor: "—",
       prazo: futureDate(3),
       urgente: true,
+      prioridade: "Urgente",
       observacoes: "Cirurgia agendada — guia deve estar pronto com 48h de antecedência.",
       status: "Em prova",
       arquivos: [
@@ -140,6 +142,7 @@ export const seed: LabDataset = {
       cor: "A1",
       prazo: pastDate(1),
       urgente: false,
+      prioridade: "Normal",
       observacoes: "Estratificação para reproduzir translucidez natural dos incisivos centrais.",
       status: "Em análise",
       arquivos: [],
@@ -163,6 +166,7 @@ export const seed: LabDataset = {
       cor: "—",
       prazo: futureDate(15),
       urgente: false,
+      prioridade: "Normal",
       observacoes: "Planejamento para segunda fase do caso, após osseointegração.",
       status: "Recebida",
       arquivos: [],
@@ -185,6 +189,7 @@ export const seed: LabDataset = {
       cor: "A3",
       prazo: pastDate(12),
       urgente: false,
+      prioridade: "Normal",
       observacoes: "Trabalho completo, do recebimento à entrega.",
       status: "Enviada/Entregue",
       arquivos: [

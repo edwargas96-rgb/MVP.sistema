@@ -5,37 +5,36 @@ import { AppShell } from "../components/AppShell";
 import { Button, EmptyState, StatusBadge, UrgentBadge } from "../components/primitives";
 import { PrazoBadge } from "../components/PrazoBadge";
 import { useBrand } from "../brand/BrandProvider";
+import type { Order } from "../types";
 
 export function DashboardPage() {
   const brand = useBrand();
   const { visibleOrders, currentUser, clinicName } = useData();
   const isLab = currentUser?.role === "laboratorio";
 
-  const novas = visibleOrders.filter((o) => o.status === "Recebida").length;
-  const emProducao = visibleOrders.filter((o) =>
-    ["Em análise", "Em produção", "Em prova"].includes(o.status),
-  ).length;
-  const prontas = visibleOrders.filter((o) => o.status === "Pronta").length;
-  const atrasadas = visibleOrders.filter((o) => {
-    if (o.status === "Enviada/Entregue") return false;
-    return new Date(o.prazo) < new Date();
-  }).length;
+  const ultimoStatus = brand.statusFlow[brand.statusFlow.length - 1];
+  const statusCards = brand.dashboard.statCards.filter((c) => c.tipo === "status");
+
+  const cards = brand.dashboard.statCards.map((card, i) => {
+    if (card.tipo === "atrasadas") {
+      const valor = visibleOrders.filter((o) => o.status !== ultimoStatus && new Date(o.prazo) < new Date()).length;
+      return { label: card.label, valor, icone: TriangleAlert, cor: "var(--brand-status-erro-text)" };
+    }
+    const valor = visibleOrders.filter((o) => card.statuses?.includes(o.status)).length;
+    const posicao = statusCards.indexOf(card);
+    const ultima = posicao === statusCards.length - 1;
+    const cor = posicao === 0 ? "var(--brand-primary)" : ultima ? "var(--brand-status-sucesso-text)" : "var(--brand-status-alerta-text)";
+    return { label: card.label, valor, icone: posicao === 0 ? Inbox : PackageCheck, cor };
+  });
 
   const ordenadas = [...visibleOrders].sort(
     (a, b) => new Date(b.criadaEm).getTime() - new Date(a.criadaEm).getTime(),
   );
 
-  const cards = [
-    { label: "Novas", valor: novas, icone: Inbox, cor: "var(--brand-primary)" },
-    { label: "Em produção", valor: emProducao, cor: "#B45309", icone: PackageCheck },
-    { label: "Prontas", valor: prontas, cor: "#047857", icone: PackageCheck },
-    { label: "Atrasadas", valor: atrasadas, cor: "#B91C1C", icone: TriangleAlert },
-  ];
-
   return (
     <AppShell
-      titulo={isLab ? "Painel do laboratório" : "Minhas ordens"}
-      descricao={isLab ? `Todas as ordens das clínicas parceiras do ${brand.nome} ${brand.nomeDestaque}` : "Ordens enviadas pela sua clínica"}
+      titulo={isLab ? brand.textos.dashboardTituloLab : brand.textos.dashboardTituloClinica}
+      descricao={isLab ? brand.textos.dashboardSubtituloLab : brand.textos.dashboardSubtituloClinica}
       acao={
         !isLab && (
           <Link to="/nova-ordem">
@@ -47,7 +46,10 @@ export function DashboardPage() {
       }
     >
       {isLab && (
-        <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div
+          className="mb-6 grid gap-3"
+          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}
+        >
           {cards.map((card) => (
             <div
               key={card.label}
@@ -83,7 +85,7 @@ export function DashboardPage() {
           </div>
         ) : (
           <ul className="divide-y" style={{ borderColor: "var(--brand-border)" }}>
-            {ordenadas.map((order) => (
+            {ordenadas.map((order: Order) => (
               <li key={order.id}>
                 <Link
                   to={`/ordens/${order.id}`}

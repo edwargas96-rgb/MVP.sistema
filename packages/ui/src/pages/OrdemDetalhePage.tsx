@@ -6,16 +6,18 @@ import { Button, Card, EmptyState, Label, Select, StatusBadge, Textarea, UrgentB
 import { Odontogram } from "../components/Odontogram";
 import { FileUpload } from "../components/FileUpload";
 import { Timeline, formatDate } from "../components/Timeline";
-import { ORDER_STATUS_FLOW, type OrderStatus } from "../types";
+import { useBrand } from "../brand/BrandProvider";
+import type { OrderStatus } from "../types";
 
 export function OrdemDetalhePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const brand = useBrand();
   const { data, currentUser, updateOrderStatus, addOrderFiles, addOrderComment, clinicName } = useData();
   const order = data.orders.find((o) => o.id === id);
   const isLab = currentUser?.role === "laboratorio";
 
-  const [novoStatus, setNovoStatus] = useState<OrderStatus>(order?.status ?? "Recebida");
+  const [novoStatus, setNovoStatus] = useState<OrderStatus>(order?.status ?? brand.statusFlow[0]);
   const [comentarioStatus, setComentarioStatus] = useState("");
   const [comentario, setComentario] = useState("");
 
@@ -63,10 +65,12 @@ export function OrdemDetalhePage() {
         <div className="space-y-6 lg:col-span-2">
           <Card className="grid gap-4 p-5 sm:grid-cols-2">
             <Info label="Dentista responsável" value={order.dentista} />
+            {order.idade && <Info label="Idade do paciente" value={order.idade} />}
             <Info label="Serviço" value={order.servico} />
             <Info label="Material" value={order.material} />
             <Info label="Cor / VITA" value={order.cor} />
             <Info label="Prazo solicitado" value={formatDate(order.prazo)} />
+            <Info label="Prioridade" value={order.prioridade} />
             <Info label="Sob implante" value={order.sobImplante ? `Sim · ${order.sistemaImplante}` : "Não"} />
           </Card>
 
@@ -101,7 +105,7 @@ export function OrdemDetalhePage() {
               </h3>
               <form onSubmit={handleStatusChange} className="space-y-3">
                 <Select value={novoStatus} onChange={(e) => setNovoStatus(e.target.value as OrderStatus)}>
-                  {ORDER_STATUS_FLOW.map((s) => (
+                  {brand.statusFlow.map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </Select>
@@ -121,8 +125,8 @@ export function OrdemDetalhePage() {
               Checklist das etapas
             </h3>
             <ul className="space-y-2 text-sm">
-              {ORDER_STATUS_FLOW.map((s) => {
-                const done = ORDER_STATUS_FLOW.indexOf(order.status) >= ORDER_STATUS_FLOW.indexOf(s);
+              {brand.statusFlow.map((s) => {
+                const done = brand.statusFlow.indexOf(order.status) >= brand.statusFlow.indexOf(s);
                 return (
                   <li key={s} className="flex items-center gap-2">
                     <span

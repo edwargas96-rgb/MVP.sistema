@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { Order } from "../types";
 import { StatusBadge } from "./primitives";
+import { useBrand } from "../brand/BrandProvider";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const MONTHS = [
@@ -12,8 +13,8 @@ function isSameDay(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
-function dayTone(order: Order, today: Date): "atrasado" | "proximo" | "normal" {
-  if (order.status === "Enviada/Entregue") return "normal";
+function dayTone(order: Order, today: Date, ultimoStatus: string): "atrasado" | "proximo" | "normal" {
+  if (order.status === ultimoStatus) return "normal";
   const prazo = new Date(order.prazo);
   const diffDays = Math.ceil((prazo.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return "atrasado";
@@ -22,6 +23,8 @@ function dayTone(order: Order, today: Date): "atrasado" | "proximo" | "normal" {
 }
 
 export function CalendarView({ orders, onSelect }: { orders: Order[]; onSelect: (order: Order) => void }) {
+  const brand = useBrand();
+  const ultimoStatus = brand.statusFlow[brand.statusFlow.length - 1];
   const [cursor, setCursor] = useState(() => new Date());
   const today = useMemo(() => new Date(), []);
 
@@ -77,7 +80,7 @@ export function CalendarView({ orders, onSelect }: { orders: Order[]; onSelect: 
               <span className="text-xs font-medium" style={{ color: "var(--brand-text-secondary)" }}>{date.getDate()}</span>
               <div className="mt-1 space-y-1">
                 {dayOrders.slice(0, 3).map((order) => {
-                  const tone = dayTone(order, today);
+                  const tone = dayTone(order, today, ultimoStatus);
                   const bg = tone === "atrasado" ? "bg-red-100 text-red-700" : tone === "proximo" ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-700";
                   return (
                     <button

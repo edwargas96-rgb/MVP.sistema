@@ -4,7 +4,6 @@ import { useBrand } from "../brand/BrandProvider";
 import { useData } from "../hooks/DataProvider";
 import { Button, Input, Label } from "../components/primitives";
 import { Logo } from "../components/Logo";
-import { ORDER_STATUS_FLOW } from "../types";
 
 export function LoginPage() {
   const brand = useBrand();
@@ -50,7 +49,7 @@ export function LoginPage() {
           className="text-xs"
           style={{ color: "var(--brand-sidebar-text)", opacity: 0.45, fontFamily: "var(--brand-font-mono)" }}
         >
-          {ORDER_STATUS_FLOW.join(" → ")}
+          {brand.statusFlow.join(" → ")}
         </div>
       </div>
 
@@ -61,10 +60,10 @@ export function LoginPage() {
           </div>
 
           <h1 className="text-2xl font-semibold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
-            Entrar
+            {brand.textos.loginTitulo}
           </h1>
           <p className="mt-1 text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-            {brand.descricao}
+            {brand.textos.loginSubtitulo}
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -89,28 +88,18 @@ export function LoginPage() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={enviando}>
-              {enviando ? "Entrando…" : "Entrar"}
+              {enviando ? "Entrando…" : brand.textos.loginBotaoPrincipal}
             </Button>
           </form>
 
-          <div className="mt-4 flex items-center gap-2 text-xs" style={{ color: "var(--brand-text-secondary)" }}>
-            <span>Ambiente de demonstração —</span>
-            <button
-              type="button"
-              onClick={() => entrarComo("laboratorio")}
-              className="font-semibold hover:underline"
-              style={{ color: "var(--brand-primary)" }}
-            >
-              entrar como laboratório
-            </button>
-            <span>ou</span>
+          <div className="mt-4 text-center">
             <button
               type="button"
               onClick={() => entrarComo("clinica")}
-              className="font-semibold hover:underline"
+              className="text-sm font-semibold hover:underline"
               style={{ color: "var(--brand-primary)" }}
             >
-              como clínica
+              {brand.textos.loginLinkSecundario}
             </button>
           </div>
 

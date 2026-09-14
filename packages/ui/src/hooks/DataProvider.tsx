@@ -16,8 +16,10 @@ import type {
   OrderFile,
   OrderStatus,
   Patient,
+  Prioridade,
 } from "../types";
 import { createLabStore, genId, sessionKey } from "../lib/store";
+import { useBrand } from "../brand/BrandProvider";
 
 interface DataContextValue {
   brandId: string;
@@ -48,6 +50,7 @@ interface DataContextValue {
 export interface NovoOrdemInput {
   clinicId: string;
   paciente: string;
+  idade?: string;
   dentista: string;
   servico: string;
   elementos: number[];
@@ -56,7 +59,7 @@ export interface NovoOrdemInput {
   material: string;
   cor: string;
   prazo: string;
-  urgente: boolean;
+  prioridade: Prioridade;
   observacoes: string;
   arquivos: OrderFile[];
 }
@@ -72,6 +75,7 @@ export function DataProvider({
   seed: LabDataset;
   children: ReactNode;
 }) {
+  const brand = useBrand();
   const store = useMemo(() => createLabStore(brandId, seed), [brandId, seed]);
   useMemo(() => store.ensureSeeded(), [store]);
 
@@ -124,15 +128,17 @@ export function DataProvider({
     (input: NovoOrdemInput): Order => {
       const numero = `OS-${String(data.orders.length + 1).padStart(4, "0")}`;
       const now = new Date().toISOString();
+      const statusInicial = brand.statusFlow[0];
       const order: Order = {
         id: genId("ord"),
         numero,
-        status: "Recebida",
+        status: statusInicial,
+        urgente: input.prioridade === "Urgente",
         criadaEm: now,
         eventos: [
           {
             id: genId("evt"),
-            status: "Recebida",
+            status: statusInicial,
             comentario: "Ordem criada e recebida pelo laboratório.",
             autor: currentUser?.nome ?? "Sistema",
             criadoEm: now,
@@ -143,7 +149,7 @@ export function DataProvider({
       persist((prev) => ({ ...prev, orders: [order, ...prev.orders] }));
       return order;
     },
-    [data.orders.length, currentUser, persist],
+    [data.orders.length, currentUser, persist, brand.statusFlow],
   );
 
   const updateOrderStatus = useCallback(

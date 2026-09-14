@@ -34,22 +34,11 @@ export interface Patient {
   observacoes?: string;
 }
 
-export type OrderStatus =
-  | "Recebida"
-  | "Em análise"
-  | "Em produção"
-  | "Em prova"
-  | "Pronta"
-  | "Enviada/Entregue";
-
-export const ORDER_STATUS_FLOW: OrderStatus[] = [
-  "Recebida",
-  "Em análise",
-  "Em produção",
-  "Em prova",
-  "Pronta",
-  "Enviada/Entregue",
-];
+/**
+ * Etapa do fluxo de produção. O conjunto e a ordem válidos de valores vêm de
+ * `brand.statusFlow` (BrandConfig) — cada marca define seu próprio fluxo.
+ */
+export type OrderStatus = string;
 
 export interface OrderFile {
   id: string;
@@ -68,11 +57,14 @@ export interface OrderEvent {
   criadoEm: string;
 }
 
+export type Prioridade = "Normal" | "Alta" | "Urgente";
+
 export interface Order {
   id: string;
   numero: string;
   clinicId: string;
   paciente: string;
+  idade?: string;
   dentista: string;
   servico: string;
   elementos: number[];
@@ -81,6 +73,8 @@ export interface Order {
   material: string;
   cor: string;
   prazo: string;
+  prioridade: Prioridade;
+  /** Derivado de prioridade === "Urgente"; mantido para compatibilidade com badges e filtros. */
   urgente: boolean;
   observacoes: string;
   status: OrderStatus;

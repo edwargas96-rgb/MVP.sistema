@@ -19,6 +19,16 @@ export function BrandProvider({ brand, children }: { brand: BrandConfig; childre
     root.style.setProperty("--brand-sidebar-accent-text", brand.cores.sidebarAccentTexto);
     root.style.setProperty("--brand-sidebar-border", brand.cores.sidebarBorda);
     root.style.setProperty("--brand-sidebar-primary", brand.cores.sidebarPrimaria);
+    root.style.setProperty("--brand-status-neutro-bg", brand.cores.statusNeutroBg);
+    root.style.setProperty("--brand-status-neutro-text", brand.cores.statusNeutroTexto);
+    root.style.setProperty("--brand-status-info-bg", brand.cores.statusInfoBg);
+    root.style.setProperty("--brand-status-info-text", brand.cores.statusInfoTexto);
+    root.style.setProperty("--brand-status-alerta-bg", brand.cores.statusAlertaBg);
+    root.style.setProperty("--brand-status-alerta-text", brand.cores.statusAlertaTexto);
+    root.style.setProperty("--brand-status-sucesso-bg", brand.cores.statusSucessoBg);
+    root.style.setProperty("--brand-status-sucesso-text", brand.cores.statusSucessoTexto);
+    root.style.setProperty("--brand-status-erro-bg", brand.cores.statusErroBg);
+    root.style.setProperty("--brand-status-erro-text", brand.cores.statusErroTexto);
     root.style.setProperty("--brand-font-title", brand.fontes.titulo);
     root.style.setProperty("--brand-font-body", brand.fontes.corpo);
     root.style.setProperty("--brand-font-mono", brand.fontes.mono);

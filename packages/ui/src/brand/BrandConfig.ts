@@ -1,3 +1,25 @@
+export interface StatCardConfig {
+  label: string;
+  /** "atrasadas" is computed from prazo < hoje && status não é o último da statusFlow. Qualquer outro valor filtra pelas statuses informadas. */
+  tipo: "status" | "atrasadas";
+  statuses?: string[];
+}
+
+export interface BrandTextos {
+  loginTitulo: string;
+  loginSubtitulo: string;
+  loginBotaoPrincipal: string;
+  loginLinkSecundario: string;
+  dashboardTituloLab: string;
+  dashboardSubtituloLab: string;
+  dashboardTituloClinica: string;
+  dashboardSubtituloClinica: string;
+  novaOrdemTitulo: string;
+  novaOrdemSubtitulo: string;
+  uploadTitulo: string;
+  uploadSubtitulo: string;
+}
+
 export interface BrandConfig {
   id: string;
   nome: string;
@@ -7,9 +29,14 @@ export interface BrandConfig {
   estado: string;
   responsavelLabel: string;
   responsavelNome: string;
-  descricao: string;
   headline: string;
   subheadline: string;
+  /** Etapas do fluxo de produção, na ordem. A última é considerada "concluída". */
+  statusFlow: string[];
+  dashboard: {
+    statCards: StatCardConfig[];
+  };
+  textos: BrandTextos;
   cores: {
     primaria: string;
     primariaEscura: string;
@@ -24,6 +51,16 @@ export interface BrandConfig {
     sidebarAccentTexto: string;
     sidebarBorda: string;
     sidebarPrimaria: string;
+    statusNeutroBg: string;
+    statusNeutroTexto: string;
+    statusInfoBg: string;
+    statusInfoTexto: string;
+    statusAlertaBg: string;
+    statusAlertaTexto: string;
+    statusSucessoBg: string;
+    statusSucessoTexto: string;
+    statusErroBg: string;
+    statusErroTexto: string;
   };
   fontes: {
     titulo: string;
