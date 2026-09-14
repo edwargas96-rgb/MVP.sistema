@@ -13,6 +13,12 @@ export function BrandProvider({ brand, children }: { brand: BrandConfig; childre
     root.style.setProperty("--brand-text", brand.cores.texto);
     root.style.setProperty("--brand-text-secondary", brand.cores.textoSecundario);
     root.style.setProperty("--brand-border", brand.cores.borda);
+    root.style.setProperty("--brand-sidebar-bg", brand.cores.sidebarFundo);
+    root.style.setProperty("--brand-sidebar-text", brand.cores.sidebarTexto);
+    root.style.setProperty("--brand-sidebar-accent", brand.cores.sidebarAccent);
+    root.style.setProperty("--brand-sidebar-accent-text", brand.cores.sidebarAccentTexto);
+    root.style.setProperty("--brand-sidebar-border", brand.cores.sidebarBorda);
+    root.style.setProperty("--brand-sidebar-primary", brand.cores.sidebarPrimaria);
     root.style.setProperty("--brand-font-title", brand.fontes.titulo);
     root.style.setProperty("--brand-font-body", brand.fontes.corpo);
     root.style.setProperty("--brand-font-mono", brand.fontes.mono);

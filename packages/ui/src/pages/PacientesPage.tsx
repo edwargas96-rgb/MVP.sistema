@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useData } from "../hooks/DataProvider";
+import { AppShell } from "../components/AppShell";
 import { Button, Card, EmptyState, Input, Label, Modal } from "../components/primitives";
 
 export function PacientesPage() {
@@ -23,18 +24,12 @@ export function PacientesPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
-            Pacientes
-          </h1>
-          <p className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-            {pacientes.length} pacientes cadastrados
-          </p>
-        </div>
-        <Button onClick={() => setOpen(true)}>+ Cadastrar paciente</Button>
-      </div>
+    <AppShell
+      titulo="Pacientes"
+      descricao={`${pacientes.length} pacientes cadastrados`}
+      acao={<Button onClick={() => setOpen(true)}>+ Cadastrar paciente</Button>}
+    >
+      <div className="space-y-5">
 
       {pacientes.length === 0 ? (
         <EmptyState title="Nenhum paciente cadastrado" description="Cadastre um paciente para agilizar a abertura de novas ordens." />
@@ -84,6 +79,7 @@ export function PacientesPage() {
           <Button type="submit" className="w-full">Salvar paciente</Button>
         </form>
       </Modal>
-    </div>
+      </div>
+    </AppShell>
   );
 }

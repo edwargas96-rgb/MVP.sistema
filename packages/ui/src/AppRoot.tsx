@@ -3,7 +3,6 @@ import type { BrandConfig } from "./brand/BrandConfig";
 import { BrandProvider } from "./brand/BrandProvider";
 import { DataProvider, useData } from "./hooks/DataProvider";
 import type { LabDataset } from "./types";
-import { AppShell } from "./components/AppShell";
 import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { NovaOrdemPage } from "./pages/NovaOrdemPage";
@@ -18,7 +17,7 @@ function Protected({ children, labOnly = false }: { children: React.ReactNode; l
   const { currentUser } = useData();
   if (!currentUser) return <Navigate to="/login" replace />;
   if (labOnly && currentUser.role !== "laboratorio") return <Navigate to="/dashboard" replace />;
-  return <AppShell>{children}</AppShell>;
+  return <>{children}</>;
 }
 
 export function AppRoot({ brand, seed }: { brand: BrandConfig; seed: LabDataset }) {

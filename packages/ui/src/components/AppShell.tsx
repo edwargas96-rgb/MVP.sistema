@@ -1,5 +1,17 @@
 import { useState, type ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import {
+  Building2,
+  CalendarDays,
+  ClipboardList,
+  FilePlus,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Settings,
+  Users,
+  X,
+} from "lucide-react";
 import { useBrand } from "../brand/BrandProvider";
 import { useData } from "../hooks/DataProvider";
 import { Logo } from "./Logo";
@@ -7,105 +19,163 @@ import { Logo } from "./Logo";
 interface NavItem {
   to: string;
   label: string;
-  icon: string;
-  labOnly?: boolean;
+  icon: typeof LayoutDashboard;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { to: "/dashboard", label: "Painel", icon: "📊" },
-  { to: "/ordens", label: "Ordens de serviço", icon: "🧾" },
-  { to: "/nova-ordem", label: "Nova ordem", icon: "➕" },
-  { to: "/calendario", label: "Calendário", icon: "🗓️" },
-  { to: "/pacientes", label: "Pacientes", icon: "🧑‍⚕️" },
-  { to: "/clinicas", label: "Clínicas", icon: "🏥", labOnly: true },
-  { to: "/configuracoes", label: "Configurações", icon: "⚙️", labOnly: true },
+const BASE_ITEMS: NavItem[] = [{ to: "/dashboard", label: "Painel", icon: LayoutDashboard }];
+const CLINICA_ITEMS: NavItem[] = [
+  { to: "/nova-ordem", label: "Nova ordem", icon: FilePlus },
+  { to: "/calendario", label: "Calendário", icon: CalendarDays },
+  { to: "/pacientes", label: "Pacientes", icon: Users },
+];
+const LAB_ITEMS: NavItem[] = [
+  { to: "/ordens", label: "Ordens", icon: ClipboardList },
+  { to: "/nova-ordem", label: "Nova ordem", icon: FilePlus },
+  { to: "/calendario", label: "Calendário", icon: CalendarDays },
+  { to: "/pacientes", label: "Pacientes", icon: Users },
+  { to: "/clinicas", label: "Clínicas", icon: Building2 },
+  { to: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
-export function AppShell({ children }: { children: ReactNode }) {
-  const brand = useBrand();
+function SidebarHeader() {
+  return (
+    <div className="flex min-w-0 items-center gap-3 overflow-hidden px-5 py-6">
+      <Logo size="md" variant="sidebar" />
+    </div>
+  );
+}
+
+function SidebarFooter({ onLogout }: { onLogout: () => void }) {
+  const { currentUser, clinicName } = useData();
+  return (
+    <div className="border-t px-4 py-4" style={{ borderColor: "var(--brand-sidebar-border)" }}>
+      <div className="truncate text-sm font-medium" style={{ color: "var(--brand-sidebar-accent-text)" }}>
+        {currentUser?.nome}
+      </div>
+      <div className="truncate text-xs" style={{ color: "var(--brand-sidebar-text)", opacity: 0.6 }}>
+        {currentUser?.role === "laboratorio" ? "Laboratório" : currentUser?.clinicId ? clinicName(currentUser.clinicId) : "Clínica"}
+      </div>
+      <button
+        onClick={onLogout}
+        className="mt-3 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors hover:opacity-80"
+        style={{ color: "var(--brand-sidebar-text)", opacity: 0.85 }}
+      >
+        <LogOut className="size-4" />
+        Sair
+      </button>
+    </div>
+  );
+}
+
+function NavList({ items, onNavigate }: { items: NavItem[]; onNavigate: () => void }) {
+  return (
+    <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3">
+      {items.map((item) => (
+        <NavLink
+          key={item.to}
+          to={item.to}
+          onClick={onNavigate}
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors"
+          style={({ isActive }) => ({
+            backgroundColor: isActive ? "var(--brand-sidebar-accent)" : "transparent",
+            color: isActive ? "var(--brand-sidebar-accent-text)" : "var(--brand-sidebar-text)",
+            opacity: isActive ? 1 : 0.8,
+            fontWeight: isActive ? 600 : 400,
+          })}
+        >
+          <item.icon className="size-4.5 shrink-0" />
+          {item.label}
+        </NavLink>
+      ))}
+    </nav>
+  );
+}
+
+export function AppShell({
+  titulo,
+  descricao,
+  acao,
+  children,
+}: {
+  titulo: string;
+  descricao?: string;
+  acao?: ReactNode;
+  children: ReactNode;
+}) {
   const { currentUser, logout } = useData();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const items = [...BASE_ITEMS, ...(currentUser?.role === "laboratorio" ? LAB_ITEMS : CLINICA_ITEMS)];
 
   function handleLogout() {
     logout();
     navigate("/login");
   }
 
-  const items = NAV_ITEMS.filter((i) => !i.labOnly || currentUser?.role === "laboratorio");
-
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: "var(--brand-bg)", fontFamily: "var(--brand-font-body)" }}>
+    <div className="flex min-h-screen w-full" style={{ backgroundColor: "var(--brand-bg)", fontFamily: "var(--brand-font-body)" }}>
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r p-5 transition-transform md:static md:translate-x-0 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-        style={{ backgroundColor: "var(--brand-surface)", borderColor: "var(--brand-border)" }}
+        className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col md:flex"
+        style={{ backgroundColor: "var(--brand-sidebar-bg)" }}
       >
-        <div className="mb-8">
-          <Logo size="md" />
-        </div>
-        <nav className="space-y-1">
-          {items.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive ? "text-white" : "hover:bg-black/5"
-                }`
-              }
-              style={({ isActive }) => ({
-                backgroundColor: isActive ? "var(--brand-primary)" : "transparent",
-                color: isActive ? "white" : "var(--brand-text)",
-              })}
-            >
-              <span aria-hidden>{item.icon}</span>
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="mt-8 border-t pt-4" style={{ borderColor: "var(--brand-border)" }}>
-          <p className="text-sm font-medium" style={{ color: "var(--brand-text)" }}>
-            {currentUser?.nome}
-          </p>
-          <p className="text-xs" style={{ color: "var(--brand-text-secondary)" }}>
-            {currentUser?.role === "laboratorio" ? "Laboratório" : "Clínica parceira"}
-          </p>
-          <button
-            onClick={handleLogout}
-            className="mt-3 text-xs font-semibold hover:underline"
-            style={{ color: "var(--brand-primary)" }}
-          >
-            Sair da conta
-          </button>
-        </div>
+        <SidebarHeader />
+        <NavList items={items} onNavigate={() => {}} />
+        <SidebarFooter onLogout={handleLogout} />
       </aside>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-30 bg-black/30 md:hidden" onClick={() => setMobileOpen(false)} />
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} aria-hidden />
+          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col" style={{ backgroundColor: "var(--brand-sidebar-bg)" }}>
+            <div className="flex items-start justify-between">
+              <SidebarHeader />
+              <button
+                onClick={() => setMobileOpen(false)}
+                aria-label="Fechar menu"
+                className="mt-6 mr-4"
+                style={{ color: "var(--brand-sidebar-text)", opacity: 0.7 }}
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <NavList items={items} onNavigate={() => setMobileOpen(false)} />
+            <SidebarFooter onLogout={handleLogout} />
+          </aside>
+        </div>
       )}
 
-      <div className="flex-1">
+      <div className="flex min-w-0 flex-1 flex-col">
         <header
-          className="flex items-center justify-between border-b px-4 py-3 md:hidden"
-          style={{ backgroundColor: "var(--brand-surface)", borderColor: "var(--brand-border)" }}
+          className="sticky top-0 z-30 border-b backdrop-blur"
+          style={{ borderColor: "var(--brand-border)", backgroundColor: "color-mix(in srgb, var(--brand-bg) 85%, transparent)" }}
         >
-          <Logo size="sm" />
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="rounded-lg border px-3 py-1.5 text-sm"
-            style={{ borderColor: "var(--brand-border)" }}
-            aria-label="Abrir menu"
-          >
-            ☰
-          </button>
+          <div className="flex items-center gap-3 px-4 py-4 sm:px-6 lg:px-8">
+            <button
+              className="rounded-md p-1.5 md:hidden"
+              style={{ color: "var(--brand-text-secondary)" }}
+              onClick={() => setMobileOpen(true)}
+              aria-label="Abrir menu"
+            >
+              <Menu className="size-5" />
+            </button>
+            <div className="min-w-0 flex-1">
+              <h1
+                className="truncate text-xl font-semibold sm:text-2xl"
+                style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}
+              >
+                {titulo}
+              </h1>
+              {descricao && (
+                <p className="truncate text-sm" style={{ color: "var(--brand-text-secondary)" }}>
+                  {descricao}
+                </p>
+              )}
+            </div>
+            {acao}
+          </div>
         </header>
-        <main className="mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-8">{children}</main>
-        <footer className="px-4 pb-6 text-center text-xs md:px-8" style={{ color: "var(--brand-text-secondary)" }}>
-          {brand.nome} · {brand.cidade}/{brand.estado} · Ambiente de demonstração (MVP)
-        </footer>
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
       </div>
     </div>
   );

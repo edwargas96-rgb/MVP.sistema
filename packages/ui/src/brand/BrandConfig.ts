@@ -1,12 +1,15 @@
 export interface BrandConfig {
   id: string;
   nome: string;
+  nomeDestaque: string;
   tagline: string;
   cidade: string;
   estado: string;
   responsavelLabel: string;
   responsavelNome: string;
   descricao: string;
+  headline: string;
+  subheadline: string;
   cores: {
     primaria: string;
     primariaEscura: string;
@@ -15,6 +18,12 @@ export interface BrandConfig {
     texto: string;
     textoSecundario: string;
     borda: string;
+    sidebarFundo: string;
+    sidebarTexto: string;
+    sidebarAccent: string;
+    sidebarAccentTexto: string;
+    sidebarBorda: string;
+    sidebarPrimaria: string;
   };
   fontes: {
     titulo: string;

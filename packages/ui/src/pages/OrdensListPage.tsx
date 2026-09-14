@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useData } from "../hooks/DataProvider";
+import { AppShell } from "../components/AppShell";
 import { Card, EmptyState, Input, Select, StatusBadge, UrgentBadge } from "../components/primitives";
 import { formatDate } from "../components/Timeline";
 import type { OrderStatus } from "../types";
@@ -29,16 +30,8 @@ export function OrdensListPage() {
   }, [visibleOrders, busca, status, somenteUrgentes, clinicName]);
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
-          Ordens de serviço
-        </h1>
-        <p className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-          {filtradas.length} de {visibleOrders.length} ordens
-        </p>
-      </div>
-
+    <AppShell titulo="Ordens" descricao={`${filtradas.length} de ${visibleOrders.length} ordens`}>
+      <div className="space-y-5">
       <Card className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
         <Input
           value={busca}
@@ -99,6 +92,7 @@ export function OrdensListPage() {
           </table>
         </Card>
       )}
-    </div>
+      </div>
+    </AppShell>
   );
 }

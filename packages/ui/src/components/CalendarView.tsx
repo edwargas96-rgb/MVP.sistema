@@ -13,7 +13,7 @@ function isSameDay(a: Date, b: Date) {
 }
 
 function dayTone(order: Order, today: Date): "atrasado" | "proximo" | "normal" {
-  if (order.status === "Entregue") return "normal";
+  if (order.status === "Enviada/Entregue") return "normal";
   const prazo = new Date(order.prazo);
   const diffDays = Math.ceil((prazo.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return "atrasado";

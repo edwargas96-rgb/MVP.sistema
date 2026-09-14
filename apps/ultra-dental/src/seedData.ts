@@ -189,7 +189,7 @@ export const seed: LabDataset = {
       prazo: pastDate(9),
       urgente: false,
       observacoes: "Trabalho completo, do escaneamento à entrega — Cerec.",
-      status: "Entregue",
+      status: "Enviada/Entregue",
       arquivos: [
         { id: "file-4", nome: "resultado_final.jpg", tipo: "foto", extensao: "jpg", tamanhoKb: 980, criadoEm: daysAgo(11) },
       ],
@@ -197,7 +197,7 @@ export const seed: LabDataset = {
         { id: "evt-10", status: "Recebida", comentario: "Escaneamento recebido via Cerec.", autor: "Equipe Ultra Dental Lab", criadoEm: daysAgo(18) },
         { id: "evt-11", status: "Em produção", comentario: "Design CAD e fresagem das lentes concluídos.", autor: "Equipe Ultra Dental Lab", criadoEm: daysAgo(15) },
         { id: "evt-12", status: "Pronta", comentario: "Acabamento e polimento finalizados.", autor: "Equipe Ultra Dental Lab", criadoEm: daysAgo(12) },
-        { id: "evt-13", status: "Entregue", comentario: "Entregue à clínica dentro do prazo.", autor: "Equipe Ultra Dental Lab", criadoEm: daysAgo(9) },
+        { id: "evt-13", status: "Enviada/Entregue", comentario: "Entregue à clínica dentro do prazo.", autor: "Equipe Ultra Dental Lab", criadoEm: daysAgo(9) },
       ],
       criadaEm: daysAgo(18),
     },

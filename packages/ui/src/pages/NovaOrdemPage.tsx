@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useData } from "../hooks/DataProvider";
+import { AppShell } from "../components/AppShell";
 import { Button, Card, Input, Label, Select, Textarea } from "../components/primitives";
 import { Odontogram } from "../components/Odontogram";
 import { FileUpload } from "../components/FileUpload";
@@ -47,16 +48,7 @@ export function NovaOrdemPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
-          Nova ordem de serviço
-        </h1>
-        <p className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-          Preencha os dados do caso. O número da ordem é gerado automaticamente.
-        </p>
-      </div>
-
+    <AppShell titulo="Nova ordem de serviço" descricao="Preencha os dados do caso. O número da ordem é gerado automaticamente.">
       <form onSubmit={handleSubmit} className="space-y-5">
         <Card className="grid gap-4 p-5 sm:grid-cols-2">
           <div>
@@ -158,6 +150,6 @@ export function NovaOrdemPage() {
           <Button type="submit">Enviar ordem</Button>
         </div>
       </form>
-    </div>
+    </AppShell>
   );
 }

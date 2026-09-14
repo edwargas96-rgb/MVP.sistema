@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useData } from "../hooks/DataProvider";
+import { AppShell } from "../components/AppShell";
 import { CalendarView } from "../components/CalendarView";
 import { Modal } from "../components/primitives";
 import { StatusBadge, UrgentBadge } from "../components/primitives";
@@ -13,15 +14,7 @@ export function CalendarioPage() {
   const [selecionada, setSelecionada] = useState<Order | null>(null);
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
-          Calendário de prazos
-        </h1>
-        <p className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-          Visualize as ordens posicionadas na data de entrega.
-        </p>
-      </div>
+    <AppShell titulo="Calendário" descricao="Visualize as ordens posicionadas na data de entrega.">
       <CalendarView orders={visibleOrders} onSelect={setSelecionada} />
 
       <Modal open={!!selecionada} onClose={() => setSelecionada(null)} title={selecionada?.numero ?? ""}>
@@ -45,6 +38,6 @@ export function CalendarioPage() {
           </div>
         )}
       </Modal>
-    </div>
+    </AppShell>
   );
 }

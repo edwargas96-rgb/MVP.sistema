@@ -40,7 +40,7 @@ export type OrderStatus =
   | "Em produção"
   | "Em prova"
   | "Pronta"
-  | "Entregue";
+  | "Enviada/Entregue";
 
 export const ORDER_STATUS_FLOW: OrderStatus[] = [
   "Recebida",
@@ -48,7 +48,7 @@ export const ORDER_STATUS_FLOW: OrderStatus[] = [
   "Em produção",
   "Em prova",
   "Pronta",
-  "Entregue",
+  "Enviada/Entregue",
 ];
 
 export interface OrderFile {

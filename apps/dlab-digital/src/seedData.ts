@@ -186,7 +186,7 @@ export const seed: LabDataset = {
       prazo: pastDate(12),
       urgente: false,
       observacoes: "Trabalho completo, do recebimento à entrega.",
-      status: "Entregue",
+      status: "Enviada/Entregue",
       arquivos: [
         { id: "file-4", nome: "prova_final.jpg", tipo: "foto", extensao: "jpg", tamanhoKb: 1040, criadoEm: daysAgo(14) },
       ],
@@ -194,7 +194,7 @@ export const seed: LabDataset = {
         { id: "evt-10", status: "Recebida", comentario: "Moldagem digital recebida.", autor: "Dr. Geninho Thomé", criadoEm: daysAgo(22) },
         { id: "evt-11", status: "Em produção", comentario: "Fresagem em zircônia monolítica.", autor: "Dr. Geninho Thomé", criadoEm: daysAgo(19) },
         { id: "evt-12", status: "Pronta", comentario: "Acabamento e glazing concluídos.", autor: "Dr. Geninho Thomé", criadoEm: daysAgo(16) },
-        { id: "evt-13", status: "Entregue", comentario: "Entregue à clínica.", autor: "Dr. Geninho Thomé", criadoEm: daysAgo(14) },
+        { id: "evt-13", status: "Enviada/Entregue", comentario: "Entregue à clínica.", autor: "Dr. Geninho Thomé", criadoEm: daysAgo(14) },
       ],
       criadaEm: daysAgo(22),
     },

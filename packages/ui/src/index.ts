@@ -9,6 +9,7 @@ export * from "./components/Logo";
 export * from "./components/Odontogram";
 export * from "./components/FileUpload";
 export * from "./components/Timeline";
+export * from "./components/PrazoBadge";
 export * from "./components/CalendarView";
 export * from "./components/AppShell";
 export * from "./pages/LoginPage";

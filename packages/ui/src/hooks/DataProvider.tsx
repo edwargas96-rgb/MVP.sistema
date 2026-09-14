@@ -23,7 +23,13 @@ interface DataContextValue {
   brandId: string;
   data: LabDataset;
   currentUser: AuthUser | null;
-  login: (email: string, senha: string) => AuthUser | null;
+  /**
+   * Ambiente de demonstração: sempre autentica com sucesso, mesmo com campos
+   * vazios. Se o e-mail informado corresponder a um cadastro conhecido, usa
+   * esse perfil; caso contrário, usa o perfil de demonstração do papel
+   * (laboratório ou clínica) solicitado.
+   */
+  loginDemo: (email: string, papelPreferido: "laboratorio" | "clinica") => AuthUser;
   logout: () => void;
   visibleOrders: Order[];
   addOrder: (input: NovoOrdemInput) => Order;
@@ -90,15 +96,15 @@ export function DataProvider({
     [store],
   );
 
-  const login = useCallback(
-    (email: string, senha: string) => {
-      const found = data.credentials.find(
-        (c) => c.email.toLowerCase() === email.toLowerCase() && c.senha === senha,
-      );
-      if (!found) return null;
-      setCurrentUser(found.user);
-      window.localStorage.setItem(sessionKey(brandId), JSON.stringify(found.user));
-      return found.user;
+  const loginDemo = useCallback(
+    (email: string, papelPreferido: "laboratorio" | "clinica") => {
+      const termo = email.trim().toLowerCase();
+      const porEmail = termo ? data.credentials.find((c) => c.email.toLowerCase() === termo) : undefined;
+      const porPapel = data.credentials.find((c) => c.user.role === papelPreferido);
+      const escolhido = porEmail ?? porPapel ?? data.credentials[0];
+      setCurrentUser(escolhido.user);
+      window.localStorage.setItem(sessionKey(brandId), JSON.stringify(escolhido.user));
+      return escolhido.user;
     },
     [data.credentials, brandId],
   );
@@ -265,7 +271,7 @@ export function DataProvider({
     brandId,
     data,
     currentUser,
-    login,
+    loginDemo,
     logout,
     visibleOrders,
     addOrder,

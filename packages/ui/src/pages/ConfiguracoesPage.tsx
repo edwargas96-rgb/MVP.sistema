@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useData } from "../hooks/DataProvider";
+import { AppShell } from "../components/AppShell";
 import { Button, Card, Input } from "../components/primitives";
 import type { Catalogs } from "../types";
 
@@ -14,16 +15,8 @@ export function ConfiguracoesPage() {
   const { data, addCatalogItem, removeCatalogItem, resetDemoData } = useData();
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
-          Configurações
-        </h1>
-        <p className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-          Gerencie os catálogos usados na abertura de novas ordens.
-        </p>
-      </div>
-
+    <AppShell titulo="Configurações" descricao="Gerencie os catálogos usados na abertura de novas ordens.">
+      <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2">
         {(Object.keys(CATALOG_LABELS) as (keyof Catalogs)[]).map((key) => (
           <CatalogEditor
@@ -47,7 +40,8 @@ export function ConfiguracoesPage() {
           Restaurar dados de demonstração
         </Button>
       </Card>
-    </div>
+      </div>
+    </AppShell>
   );
 }
 

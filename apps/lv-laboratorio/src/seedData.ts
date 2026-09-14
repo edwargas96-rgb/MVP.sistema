@@ -184,7 +184,7 @@ export const seed: LabDataset = {
       prazo: pastDate(10),
       urgente: false,
       observacoes: "Modelo de estudo para planejamento ortodôntico.",
-      status: "Entregue",
+      status: "Enviada/Entregue",
       arquivos: [
         { id: "file-4", nome: "modelo_estudo.stl", tipo: "arquivo", extensao: "stl", tamanhoKb: 2100, criadoEm: daysAgo(20) },
       ],
@@ -192,7 +192,7 @@ export const seed: LabDataset = {
         { id: "evt-10", status: "Recebida", comentario: "Arquivo STL recebido.", autor: "Lucas de Vargas", criadoEm: daysAgo(20) },
         { id: "evt-11", status: "Em produção", comentario: "Impressão realizada.", autor: "Lucas de Vargas", criadoEm: daysAgo(18) },
         { id: "evt-12", status: "Pronta", comentario: "Modelo finalizado e higienizado.", autor: "Lucas de Vargas", criadoEm: daysAgo(16) },
-        { id: "evt-13", status: "Entregue", comentario: "Retirado pela clínica.", autor: "Lucas de Vargas", criadoEm: daysAgo(15) },
+        { id: "evt-13", status: "Enviada/Entregue", comentario: "Retirado pela clínica.", autor: "Lucas de Vargas", criadoEm: daysAgo(15) },
       ],
       criadaEm: daysAgo(20),
     },

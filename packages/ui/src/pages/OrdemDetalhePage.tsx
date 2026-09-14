@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useData } from "../hooks/DataProvider";
+import { AppShell } from "../components/AppShell";
 import { Button, Card, EmptyState, Label, Select, StatusBadge, Textarea, UrgentBadge } from "../components/primitives";
 import { Odontogram } from "../components/Odontogram";
 import { FileUpload } from "../components/FileUpload";
@@ -20,11 +21,13 @@ export function OrdemDetalhePage() {
 
   if (!order) {
     return (
-      <EmptyState
-        title="Ordem não encontrada"
-        description="Ela pode ter sido removida ou o link está incorreto."
-        action={<Link to="/ordens" className="text-sm font-medium hover:underline" style={{ color: "var(--brand-primary)" }}>Voltar para ordens</Link>}
-      />
+      <AppShell titulo="Ordem não encontrada">
+        <EmptyState
+          title="Ordem não encontrada"
+          description="Ela pode ter sido removida ou o link está incorreto."
+          action={<Link to="/ordens" className="text-sm font-medium hover:underline" style={{ color: "var(--brand-primary)" }}>Voltar para ordens</Link>}
+        />
+      </AppShell>
     );
   }
 
@@ -42,22 +45,19 @@ export function OrdemDetalhePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <button onClick={() => navigate(-1)} className="mb-2 text-xs font-medium hover:underline" style={{ color: "var(--brand-text-secondary)" }}>
-            ← Voltar
-          </button>
-          <h1 className="font-mono text-2xl font-bold" style={{ color: "var(--brand-text)" }}>{order.numero}</h1>
-          <p className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-            {order.paciente} · {clinicName(order.clinicId)}
-          </p>
-        </div>
+    <AppShell
+      titulo={order.numero}
+      descricao={`${order.paciente} · ${clinicName(order.clinicId)}`}
+      acao={
         <div className="flex items-center gap-2">
           <StatusBadge status={order.status} />
           {order.urgente && <UrgentBadge />}
         </div>
-      </div>
+      }
+    >
+      <button onClick={() => navigate(-1)} className="mb-4 text-xs font-medium hover:underline" style={{ color: "var(--brand-text-secondary)" }}>
+        ← Voltar
+      </button>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
@@ -149,7 +149,7 @@ export function OrdemDetalhePage() {
           </Card>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
 

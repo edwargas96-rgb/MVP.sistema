@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useData } from "../hooks/DataProvider";
+import { AppShell } from "../components/AppShell";
 import { Button, Card, EmptyState, Input, Label, Modal } from "../components/primitives";
 
 export function ClinicasPage() {
@@ -16,18 +17,12 @@ export function ClinicasPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
-            Clínicas parceiras
-          </h1>
-          <p className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-            {data.clinics.length} clínicas cadastradas
-          </p>
-        </div>
-        <Button onClick={() => setOpen(true)}>+ Cadastrar clínica</Button>
-      </div>
+    <AppShell
+      titulo="Clínicas"
+      descricao={`${data.clinics.length} clínicas cadastradas`}
+      acao={<Button onClick={() => setOpen(true)}>+ Cadastrar clínica</Button>}
+    >
+      <div className="space-y-5">
 
       {data.clinics.length === 0 ? (
         <EmptyState title="Nenhuma clínica cadastrada" description="Cadastre a primeira clínica parceira para liberar o acesso dela." />
@@ -91,6 +86,7 @@ export function ClinicasPage() {
           <Button type="submit" className="w-full">Salvar clínica</Button>
         </form>
       </Modal>
-    </div>
+      </div>
+    </AppShell>
   );
 }

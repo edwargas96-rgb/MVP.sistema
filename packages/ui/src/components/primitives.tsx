@@ -85,17 +85,22 @@ export function Label({ children }: { children: ReactNode }) {
 }
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
-  "Recebida": "bg-slate-100 text-slate-700",
-  "Em análise": "bg-blue-100 text-blue-700",
-  "Em produção": "bg-amber-100 text-amber-800",
-  "Em prova": "bg-purple-100 text-purple-700",
-  "Pronta": "bg-emerald-100 text-emerald-700",
-  "Entregue": "bg-teal-100 text-teal-800",
+  "Recebida": "bg-slate-100 text-slate-700 border-slate-200",
+  "Em análise": "bg-blue-50 text-blue-700 border-blue-200",
+  "Em produção": "border-2",
+  "Em prova": "bg-amber-50 text-amber-800 border-amber-200",
+  "Pronta": "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Enviada/Entregue": "bg-emerald-600 text-white border-emerald-600",
 };
 
 export function StatusBadge({ status }: { status: OrderStatus }) {
+  const isEmProducao = status === "Em produção";
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLES[status]}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap ${STATUS_STYLES[status]}`}
+      style={isEmProducao ? { backgroundColor: "color-mix(in srgb, var(--brand-primary) 12%, transparent)", color: "var(--brand-primary)", borderColor: "color-mix(in srgb, var(--brand-primary) 30%, transparent)" } : undefined}
+    >
+      <span className="size-1.5 rounded-full bg-current opacity-70" />
       {status}
     </span>
   );
@@ -103,7 +108,7 @@ export function StatusBadge({ status }: { status: OrderStatus }) {
 
 export function UrgentBadge() {
   return (
-    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
+    <span className="inline-flex items-center rounded-full bg-red-50 border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-700">
       Urgente
     </span>
   );
