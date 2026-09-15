@@ -66,7 +66,7 @@ function CatalogEditor({
         {itens.map((item) => (
           <li key={item} className="flex items-center justify-between rounded-lg border px-3 py-1.5 text-sm" style={{ borderColor: "var(--brand-border)", color: "var(--brand-text)" }}>
             {item}
-            <button onClick={() => onRemove(item)} className="text-xs font-medium text-red-600 hover:underline">
+            <button onClick={() => onRemove(item)} className="text-xs font-medium hover:underline" style={{ color: "var(--brand-status-erro-text)" }}>
               Remover
             </button>
           </li>

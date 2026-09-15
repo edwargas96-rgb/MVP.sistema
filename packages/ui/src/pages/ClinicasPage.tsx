@@ -46,7 +46,13 @@ export function ClinicasPage() {
                   <td className="px-4 py-3 text-xs" style={{ color: "var(--brand-text-secondary)" }}>{c.email} · {c.telefone}</td>
                   <td className="px-4 py-3 font-mono text-xs" style={{ color: "var(--brand-text-secondary)" }}>{c.documento}</td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${c.ativo ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                    <span
+                      className="rounded-full px-2.5 py-1 text-xs font-semibold"
+                      style={{
+                        backgroundColor: c.ativo ? "var(--brand-status-sucesso-bg)" : "var(--brand-status-neutro-bg)",
+                        color: c.ativo ? "var(--brand-status-sucesso-text)" : "var(--brand-status-neutro-text)",
+                      }}
+                    >
                       {c.ativo ? "Ativa" : "Inativa"}
                     </span>
                   </td>

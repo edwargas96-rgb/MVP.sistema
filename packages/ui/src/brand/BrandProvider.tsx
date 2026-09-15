@@ -8,6 +8,8 @@ export function BrandProvider({ brand, children }: { brand: BrandConfig; childre
     const root = document.documentElement;
     root.style.setProperty("--brand-primary", brand.cores.primaria);
     root.style.setProperty("--brand-primary-dark", brand.cores.primariaEscura);
+    root.style.setProperty("--brand-primary-text", brand.cores.primariaTexto ?? "#FFFFFF");
+    root.style.setProperty("--brand-input-bg", brand.cores.inputBg ?? "#FFFFFF");
     root.style.setProperty("--brand-bg", brand.cores.fundo);
     root.style.setProperty("--brand-surface", brand.cores.superficie);
     root.style.setProperty("--brand-text", brand.cores.texto);

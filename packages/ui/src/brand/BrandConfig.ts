@@ -40,6 +40,10 @@ export interface BrandConfig {
   cores: {
     primaria: string;
     primariaEscura: string;
+    /** Cor do texto sobre botões primários. Padrão: branco (#FFFFFF) quando omitido. */
+    primariaTexto?: string;
+    /** Fundo dos campos de formulário (input/select/textarea). Padrão: branco (#FFFFFF) quando omitido. */
+    inputBg?: string;
     fundo: string;
     superficie: string;
     texto: string;
@@ -82,5 +86,11 @@ export interface BrandConfig {
   odontogramaGrande?: boolean;
   /** Oculta o nome escrito ao lado da logo no cabeçalho da barra lateral, mostrando só a imagem. Padrão: false. */
   sidebarLogoSomenteImagem?: boolean;
+  /**
+   * Status do statusFlow que representa "aguardando aprovação da clínica".
+   * Quando definido, a clínica vê um botão de aprovação rápida nesse status,
+   * que avança a ordem para a próxima etapa do fluxo. Omitido = sem botão.
+   */
+  statusAprovacao?: string;
   compatibilidades?: string[];
 }

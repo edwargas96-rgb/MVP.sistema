@@ -76,6 +76,8 @@ export interface Order {
   prioridade: Prioridade;
   /** Derivado de prioridade === "Urgente"; mantido para compatibilidade com badges e filtros. */
   urgente: boolean;
+  /** Pessoa da equipe interna do laboratório responsável pelo caso. */
+  responsavelInterno?: string;
   observacoes: string;
   status: OrderStatus;
   arquivos: OrderFile[];

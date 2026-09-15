@@ -28,6 +28,7 @@ export function NovaOrdemPage() {
   const [cor, setCor] = useState(data.catalogs.coresVita[0] ?? "");
   const [prazo, setPrazo] = useState("");
   const [prioridade, setPrioridade] = useState<Prioridade>("Normal");
+  const [responsavelInterno, setResponsavelInterno] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [arquivos, setArquivos] = useState<OrderFile[]>([]);
 
@@ -47,6 +48,7 @@ export function NovaOrdemPage() {
       cor,
       prazo,
       prioridade,
+      responsavelInterno: responsavelInterno || undefined,
       observacoes,
       arquivos,
     });
@@ -105,6 +107,12 @@ export function NovaOrdemPage() {
               ))}
             </Select>
           </div>
+          {isLab && (
+            <div>
+              <Label>Responsável interno</Label>
+              <Input value={responsavelInterno} onChange={(e) => setResponsavelInterno(e.target.value)} placeholder="Nome de quem conduz o caso" />
+            </div>
+          )}
         </Card>
 
         <Card className="p-5">

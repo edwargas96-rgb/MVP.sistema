@@ -20,14 +20,14 @@ export function Button({
   const base =
     "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
   const variants: Record<string, string> = {
-    primary: "text-white",
+    primary: "",
     secondary: "border",
     ghost: "hover:bg-black/5",
     danger: "bg-red-600 text-white hover:bg-red-700",
   };
   const style =
     variant === "primary"
-      ? { backgroundColor: "var(--brand-primary)" }
+      ? { backgroundColor: "var(--brand-primary)", color: "var(--brand-primary-text)" }
       : variant === "secondary"
         ? { borderColor: "var(--brand-border)", color: "var(--brand-text)" }
         : undefined;
@@ -62,7 +62,7 @@ export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={`w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 ${props.className ?? ""}`}
-      style={{ borderColor: "var(--brand-border)", color: "var(--brand-text)", backgroundColor: "#FFFFFF" }}
+      style={{ borderColor: "var(--brand-border)", color: "var(--brand-text)", backgroundColor: "var(--brand-input-bg)" }}
     />
   );
 }
@@ -72,7 +72,7 @@ export function Textarea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
     <textarea
       {...props}
       className={`w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 ${props.className ?? ""}`}
-      style={{ borderColor: "var(--brand-border)", color: "var(--brand-text)", backgroundColor: "#FFFFFF" }}
+      style={{ borderColor: "var(--brand-border)", color: "var(--brand-text)", backgroundColor: "var(--brand-input-bg)" }}
     />
   );
 }
@@ -81,8 +81,8 @@ export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select
       {...props}
-      className={`w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 bg-white ${props.className ?? ""}`}
-      style={{ borderColor: "var(--brand-border)", color: "var(--brand-text)" }}
+      className={`w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 ${props.className ?? ""}`}
+      style={{ borderColor: "var(--brand-border)", color: "var(--brand-text)", backgroundColor: "var(--brand-input-bg)" }}
     />
   );
 }
@@ -151,7 +151,14 @@ export function LoadingState({ label = "Carregando..." }: { label?: string }) {
 
 export function ErrorState({ message }: { message: string }) {
   return (
-    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <div
+      className="rounded-xl border px-4 py-3 text-sm"
+      style={{
+        backgroundColor: "var(--brand-status-erro-bg)",
+        color: "var(--brand-status-erro-text)",
+        borderColor: "color-mix(in srgb, var(--brand-status-erro-text) 30%, transparent)",
+      }}
+    >
       {message}
     </div>
   );
@@ -185,14 +192,15 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
       <div
-        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-xl"
+        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-xl border p-5 shadow-xl"
+        style={{ backgroundColor: "var(--brand-surface)", borderColor: "var(--brand-border)" }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
             {title}
           </h3>
-          <button onClick={onClose} className="text-xl leading-none text-slate-400 hover:text-slate-600" aria-label="Fechar">
+          <button onClick={onClose} className="text-xl leading-none hover:opacity-70" style={{ color: "var(--brand-text-secondary)" }} aria-label="Fechar">
             ×
           </button>
         </div>

@@ -81,12 +81,18 @@ export function CalendarView({ orders, onSelect }: { orders: Order[]; onSelect: 
               <div className="mt-1 space-y-1">
                 {dayOrders.slice(0, 3).map((order) => {
                   const tone = dayTone(order, today, ultimoStatus);
-                  const bg = tone === "atrasado" ? "bg-red-100 text-red-700" : tone === "proximo" ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-700";
+                  const vars =
+                    tone === "atrasado"
+                      ? { bg: "var(--brand-status-erro-bg)", text: "var(--brand-status-erro-text)" }
+                      : tone === "proximo"
+                        ? { bg: "var(--brand-status-alerta-bg)", text: "var(--brand-status-alerta-text)" }
+                        : { bg: "var(--brand-status-neutro-bg)", text: "var(--brand-status-neutro-text)" };
                   return (
                     <button
                       key={order.id}
                       onClick={() => onSelect(order)}
-                      className={`block w-full truncate rounded px-1 py-0.5 text-left text-[10px] font-medium ${bg}`}
+                      className="block w-full truncate rounded px-1 py-0.5 text-left text-[10px] font-medium"
+                      style={{ backgroundColor: vars.bg, color: vars.text }}
                       title={`${order.numero} · ${order.paciente}`}
                     >
                       {order.numero}
@@ -99,9 +105,9 @@ export function CalendarView({ orders, onSelect }: { orders: Order[]; onSelect: 
         })}
       </div>
       <div className="mt-4 flex flex-wrap gap-4 text-xs" style={{ color: "var(--brand-text-secondary)" }}>
-        <Legend color="bg-red-100" label="Atrasada" />
-        <Legend color="bg-amber-100" label="Prazo próximo (≤ 2 dias)" />
-        <Legend color="bg-slate-100" label="No prazo" />
+        <Legend color="var(--brand-status-erro-bg)" label="Atrasada" />
+        <Legend color="var(--brand-status-alerta-bg)" label="Prazo próximo (≤ 2 dias)" />
+        <Legend color="var(--brand-status-neutro-bg)" label="No prazo" />
       </div>
     </div>
   );
@@ -110,7 +116,7 @@ export function CalendarView({ orders, onSelect }: { orders: Order[]; onSelect: 
 function Legend({ color, label }: { color: string; label: string }) {
   return (
     <span className="flex items-center gap-1.5">
-      <span className={`h-3 w-3 rounded ${color}`} />
+      <span className="h-3 w-3 rounded" style={{ backgroundColor: color }} />
       {label}
     </span>
   );

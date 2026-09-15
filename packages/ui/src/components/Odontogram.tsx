@@ -64,7 +64,7 @@ function Arch({
               style={{
                 borderColor: active ? "var(--brand-primary)" : "var(--brand-border)",
                 backgroundColor: active ? "var(--brand-primary)" : "transparent",
-                color: active ? "white" : "var(--brand-text-secondary)",
+                color: active ? "var(--brand-primary-text)" : "var(--brand-text-secondary)",
               }}
               title={`Dente ${tooth}`}
             >

@@ -60,6 +60,7 @@ export interface NovoOrdemInput {
   cor: string;
   prazo: string;
   prioridade: Prioridade;
+  responsavelInterno?: string;
   observacoes: string;
   arquivos: OrderFile[];
 }

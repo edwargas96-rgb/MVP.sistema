@@ -46,6 +46,14 @@ export function OrdemDetalhePage() {
     setComentario("");
   }
 
+  const podeAprovar = !isLab && brand.statusAprovacao && order.status === brand.statusAprovacao;
+
+  function handleAprovar() {
+    const idx = brand.statusFlow.indexOf(brand.statusAprovacao!);
+    const proximo = brand.statusFlow[idx + 1] ?? brand.statusAprovacao!;
+    updateOrderStatus(order!.id, proximo, "Planejamento aprovado pela clínica.");
+  }
+
   return (
     <AppShell
       titulo={order.numero}
@@ -69,9 +77,11 @@ export function OrdemDetalhePage() {
             <Info label="Serviço" value={order.servico} />
             <Info label="Material" value={order.material} />
             <Info label="Cor / VITA" value={order.cor} />
+            <Info label="Data de recebimento" value={formatDate(order.criadaEm)} />
             <Info label="Prazo solicitado" value={formatDate(order.prazo)} />
             <Info label="Prioridade" value={order.prioridade} />
             <Info label="Sob implante" value={order.sobImplante ? `Sim · ${order.sistemaImplante}` : "Não"} />
+            {order.responsavelInterno && <Info label="Responsável interno" value={order.responsavelInterno} />}
           </Card>
 
           <Card className="p-5">
@@ -98,6 +108,18 @@ export function OrdemDetalhePage() {
         </div>
 
         <div className="space-y-6">
+          {podeAprovar && (
+            <Card className="p-5">
+              <h3 className="mb-2 font-semibold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
+                Planejamento pronto para aprovação
+              </h3>
+              <p className="mb-3 text-sm" style={{ color: "var(--brand-text-secondary)" }}>
+                Revise os arquivos e aprove para seguirmos com a produção.
+              </p>
+              <Button className="w-full" onClick={handleAprovar}>Aprovar planejamento</Button>
+            </Card>
+          )}
+
           {isLab && (
             <Card className="p-5">
               <h3 className="mb-3 font-semibold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-title)" }}>
@@ -130,8 +152,11 @@ export function OrdemDetalhePage() {
                 return (
                   <li key={s} className="flex items-center gap-2">
                     <span
-                      className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                      style={{ backgroundColor: done ? "var(--brand-primary)" : "#CBD5E1" }}
+                      className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"
+                      style={{
+                        backgroundColor: done ? "var(--brand-primary)" : "var(--brand-border)",
+                        color: done ? "var(--brand-primary-text)" : "var(--brand-text-secondary)",
+                      }}
                     >
                       {done ? "✓" : ""}
                     </span>
