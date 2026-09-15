@@ -26,6 +26,7 @@ export function NovaOrdemPage() {
   const [sistemaImplante, setSistemaImplante] = useState(data.catalogs.sistemasImplante[0] ?? "");
   const [material, setMaterial] = useState(data.catalogs.materiais[0] ?? "");
   const [cor, setCor] = useState(data.catalogs.coresVita[0] ?? "");
+  const [scanner, setScanner] = useState(data.catalogs.scanners?.[0] ?? "");
   const [prazo, setPrazo] = useState("");
   const [prioridade, setPrioridade] = useState<Prioridade>("Normal");
   const [responsavelInterno, setResponsavelInterno] = useState("");
@@ -46,6 +47,7 @@ export function NovaOrdemPage() {
       sistemaImplante: sobImplante ? sistemaImplante : undefined,
       material,
       cor,
+      scanner: data.catalogs.scanners?.length ? scanner : undefined,
       prazo,
       prioridade,
       responsavelInterno: responsavelInterno || undefined,
@@ -153,6 +155,16 @@ export function NovaOrdemPage() {
               ))}
             </Select>
           </div>
+          {!!data.catalogs.scanners?.length && (
+            <div>
+              <Label>Scanner utilizado</Label>
+              <Select value={scanner} onChange={(e) => setScanner(e.target.value)}>
+                {data.catalogs.scanners.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </Select>
+            </div>
+          )}
         </Card>
 
         <Card className="p-5">

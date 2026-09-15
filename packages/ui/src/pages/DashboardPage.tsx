@@ -45,6 +45,20 @@ export function DashboardPage() {
         )
       }
     >
+      {isLab && brand.dashboardDestaque && (
+        <div
+          className="mb-6 rounded-xl border p-5"
+          style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-status-info-bg)" }}
+        >
+          <h3 className="font-semibold" style={{ color: "var(--brand-primary)", fontFamily: "var(--brand-font-title)" }}>
+            {brand.dashboardDestaque.titulo}
+          </h3>
+          <p className="mt-1 text-sm" style={{ color: "var(--brand-text-secondary)" }}>
+            {brand.dashboardDestaque.texto}
+          </p>
+        </div>
+      )}
+
       {isLab && (
         <div
           className="mb-6 grid gap-3"
@@ -68,6 +82,12 @@ export function DashboardPage() {
         </div>
       )}
 
+      {isLab && ordenadas.length > 0 && (
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--brand-text-secondary)" }}>
+          Trabalhos em andamento
+        </h2>
+      )}
+
       <div className="overflow-hidden rounded-xl border shadow-sm" style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}>
         {ordenadas.length === 0 ? (
           <div className="p-10 text-center">
@@ -85,34 +105,41 @@ export function DashboardPage() {
           </div>
         ) : (
           <ul className="divide-y" style={{ borderColor: "var(--brand-border)" }}>
-            {ordenadas.map((order: Order) => (
-              <li key={order.id}>
-                <Link
-                  to={`/ordens/${order.id}`}
-                  className="flex flex-col gap-2 px-4 py-4 transition-colors hover:bg-black/[0.03] sm:flex-row sm:items-center sm:gap-4"
-                >
-                  <span
-                    className="w-20 shrink-0 text-sm font-semibold"
-                    style={{ color: "var(--brand-primary)", fontFamily: "var(--brand-font-mono)" }}
+            {ordenadas.map((order: Order) => {
+              const posicao = brand.statusFlow.indexOf(order.status);
+              const percentual = brand.statusFlow.length > 1 ? Math.round((posicao / (brand.statusFlow.length - 1)) * 100) : 0;
+              return (
+                <li key={order.id}>
+                  <Link
+                    to={`/ordens/${order.id}`}
+                    className="flex flex-col gap-2 px-4 py-4 transition-colors hover:bg-black/[0.03] sm:flex-row sm:items-center sm:gap-4"
                   >
-                    {order.numero}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate font-medium" style={{ color: "var(--brand-text)" }}>
-                      {order.paciente}
+                    <span
+                      className="w-20 shrink-0 text-sm font-semibold"
+                      style={{ color: "var(--brand-primary)", fontFamily: "var(--brand-font-mono)" }}
+                    >
+                      {order.numero}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate font-medium" style={{ color: "var(--brand-text)" }}>
+                        {order.paciente}
+                      </div>
+                      <div className="truncate text-sm" style={{ color: "var(--brand-text-secondary)" }}>
+                        {[order.servico, order.material, isLab ? clinicName(order.clinicId) : null].filter(Boolean).join(" · ") || "—"}
+                      </div>
+                      <div className="mt-1.5 h-1 w-full max-w-40 overflow-hidden rounded-full" style={{ backgroundColor: "var(--brand-border)" }}>
+                        <div className="h-full rounded-full" style={{ width: `${percentual}%`, backgroundColor: "var(--brand-primary)" }} />
+                      </div>
                     </div>
-                    <div className="truncate text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-                      {[order.servico, isLab ? clinicName(order.clinicId) : null].filter(Boolean).join(" · ") || "—"}
+                    <div className="flex items-center gap-2">
+                      {order.urgente && <UrgentBadge />}
+                      <PrazoBadge order={order} />
+                      <StatusBadge status={order.status} />
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {order.urgente && <UrgentBadge />}
-                    <PrazoBadge order={order} />
-                    <StatusBadge status={order.status} />
-                  </div>
-                </Link>
-              </li>
-            ))}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

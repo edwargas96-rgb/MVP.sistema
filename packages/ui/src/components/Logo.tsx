@@ -22,7 +22,13 @@ export function Logo({
           src={brand.logoPath}
           alt={brand.nome}
           className="shrink-0 rounded-xl object-contain"
-          style={{ height, width: showText ? height : "auto", maxWidth: showText ? height : height * 3.2 }}
+          style={{
+            height,
+            width: showText ? height : "auto",
+            maxWidth: showText ? height : height * 3.2,
+            padding: brand.logoFundoClaro ? height * 0.14 : 0,
+            backgroundColor: brand.logoFundoClaro ? "#FFFFFF" : "transparent",
+          }}
         />
       ) : (
         <div

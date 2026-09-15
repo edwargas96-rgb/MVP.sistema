@@ -86,6 +86,13 @@ export interface BrandConfig {
   odontogramaGrande?: boolean;
   /** Oculta o nome escrito ao lado da logo no cabeçalho da barra lateral, mostrando só a imagem. Padrão: false. */
   sidebarLogoSomenteImagem?: boolean;
+  /** Adiciona uma base clara atrás da imagem da logo, para logos escuras ficarem legíveis sobre fundos escuros. Padrão: false. */
+  logoFundoClaro?: boolean;
+  /**
+   * Bloco de destaque opcional exibido no topo do painel do laboratório
+   * (ex.: reforço de marca sobre previsibilidade de prazos). Omitido = nenhum bloco extra.
+   */
+  dashboardDestaque?: { titulo: string; texto: string };
   /**
    * Status do statusFlow que representa "aguardando aprovação da clínica".
    * Quando definido, a clínica vê um botão de aprovação rápida nesse status,

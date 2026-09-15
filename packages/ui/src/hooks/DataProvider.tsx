@@ -58,6 +58,7 @@ export interface NovoOrdemInput {
   sistemaImplante?: string;
   material: string;
   cor: string;
+  scanner?: string;
   prazo: string;
   prioridade: Prioridade;
   responsavelInterno?: string;
@@ -247,8 +248,9 @@ export function DataProvider({
     (catalogo: keyof Catalogs, valor: string) => {
       if (!valor.trim()) return;
       persist((prev) => {
-        if (prev.catalogs[catalogo].includes(valor)) return prev;
-        return { ...prev, catalogs: { ...prev.catalogs, [catalogo]: [...prev.catalogs[catalogo], valor] } };
+        const atual = prev.catalogs[catalogo] ?? [];
+        if (atual.includes(valor)) return prev;
+        return { ...prev, catalogs: { ...prev.catalogs, [catalogo]: [...atual, valor] } };
       });
     },
     [persist],
@@ -258,7 +260,7 @@ export function DataProvider({
     (catalogo: keyof Catalogs, valor: string) => {
       persist((prev) => ({
         ...prev,
-        catalogs: { ...prev.catalogs, [catalogo]: prev.catalogs[catalogo].filter((v) => v !== valor) },
+        catalogs: { ...prev.catalogs, [catalogo]: (prev.catalogs[catalogo] ?? []).filter((v) => v !== valor) },
       }));
     },
     [persist],

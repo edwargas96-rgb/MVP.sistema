@@ -20,6 +20,7 @@ export function OrdemDetalhePage() {
   const [novoStatus, setNovoStatus] = useState<OrderStatus>(order?.status ?? brand.statusFlow[0]);
   const [comentarioStatus, setComentarioStatus] = useState("");
   const [comentario, setComentario] = useState("");
+  const [comentarioAprovacao, setComentarioAprovacao] = useState("");
 
   if (!order) {
     return (
@@ -51,7 +52,20 @@ export function OrdemDetalhePage() {
   function handleAprovar() {
     const idx = brand.statusFlow.indexOf(brand.statusAprovacao!);
     const proximo = brand.statusFlow[idx + 1] ?? brand.statusAprovacao!;
-    updateOrderStatus(order!.id, proximo, "Planejamento aprovado pela clínica.");
+    const observacao = comentarioAprovacao.trim();
+    updateOrderStatus(
+      order!.id,
+      proximo,
+      `Planejamento aprovado pela clínica em ${new Date().toLocaleString("pt-BR")}.${observacao ? ` ${observacao}` : ""}`,
+    );
+    setComentarioAprovacao("");
+  }
+
+  function handleSolicitarAlteracao() {
+    const observacao = comentarioAprovacao.trim();
+    if (!observacao) return;
+    addOrderComment(order!.id, `Alteração solicitada pela clínica: ${observacao}`);
+    setComentarioAprovacao("");
   }
 
   return (
@@ -77,6 +91,7 @@ export function OrdemDetalhePage() {
             <Info label="Serviço" value={order.servico} />
             <Info label="Material" value={order.material} />
             <Info label="Cor / VITA" value={order.cor} />
+            {order.scanner && <Info label="Scanner utilizado" value={order.scanner} />}
             <Info label="Data de recebimento" value={formatDate(order.criadaEm)} />
             <Info label="Prazo solicitado" value={formatDate(order.prazo)} />
             <Info label="Prioridade" value={order.prioridade} />
@@ -114,9 +129,19 @@ export function OrdemDetalhePage() {
                 Planejamento pronto para aprovação
               </h3>
               <p className="mb-3 text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-                Revise os arquivos e aprove para seguirmos com a produção.
+                Revise os arquivos e as observações técnicas abaixo. Aprove para seguirmos com a produção ou solicite um ajuste.
               </p>
-              <Button className="w-full" onClick={handleAprovar}>Aprovar planejamento</Button>
+              <Textarea
+                rows={3}
+                value={comentarioAprovacao}
+                onChange={(e) => setComentarioAprovacao(e.target.value)}
+                placeholder="Comentário (opcional para aprovar, obrigatório para solicitar alteração)"
+                className="mb-3"
+              />
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Button className="w-full" onClick={handleAprovar}>Aprovar planejamento</Button>
+                <Button variant="secondary" className="w-full" onClick={handleSolicitarAlteracao}>Solicitar alteração</Button>
+              </div>
             </Card>
           )}
 

@@ -9,6 +9,7 @@ const CATALOG_LABELS: Record<keyof Catalogs, string> = {
   materiais: "Materiais",
   sistemasImplante: "Sistemas de implante",
   coresVita: "Cores / escala VITA",
+  scanners: "Scanners compatíveis",
 };
 
 export function ConfiguracoesPage() {
@@ -18,15 +19,17 @@ export function ConfiguracoesPage() {
     <AppShell titulo="Configurações" descricao="Gerencie os catálogos usados na abertura de novas ordens.">
       <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2">
-        {(Object.keys(CATALOG_LABELS) as (keyof Catalogs)[]).map((key) => (
-          <CatalogEditor
-            key={key}
-            titulo={CATALOG_LABELS[key]}
-            itens={data.catalogs[key]}
-            onAdd={(v) => addCatalogItem(key, v)}
-            onRemove={(v) => removeCatalogItem(key, v)}
-          />
-        ))}
+        {(Object.keys(CATALOG_LABELS) as (keyof Catalogs)[])
+          .filter((key) => data.catalogs[key] !== undefined)
+          .map((key) => (
+            <CatalogEditor
+              key={key}
+              titulo={CATALOG_LABELS[key]}
+              itens={data.catalogs[key] ?? []}
+              onAdd={(v) => addCatalogItem(key, v)}
+              onRemove={(v) => removeCatalogItem(key, v)}
+            />
+          ))}
       </div>
 
       <Card className="p-5">

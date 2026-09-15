@@ -72,6 +72,8 @@ export interface Order {
   sistemaImplante?: string;
   material: string;
   cor: string;
+  /** Scanner intraoral usado na captura (ex.: 3Shape, Medit). Só é exibido quando a marca cadastra `catalogs.scanners`. */
+  scanner?: string;
   prazo: string;
   prioridade: Prioridade;
   /** Derivado de prioridade === "Urgente"; mantido para compatibilidade com badges e filtros. */
@@ -90,6 +92,8 @@ export interface Catalogs {
   materiais: string[];
   sistemasImplante: string[];
   coresVita: string[];
+  /** Opcional: scanners intraorais compatíveis. Quando presente, libera o campo "Scanner utilizado" na nova ordem. */
+  scanners?: string[];
 }
 
 export interface LabDataset {
