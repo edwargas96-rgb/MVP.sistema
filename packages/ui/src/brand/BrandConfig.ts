@@ -74,8 +74,13 @@ export interface BrandConfig {
   logoPath: string;
   /**
    * Imagem decorativa opcional (ex.: ícone de dente da marca) exibida como
-   * destaque discreto na tela de login. Omitido = nenhuma imagem extra.
+   * destaque discreto na tela de login e como marca d'água grande no painel.
+   * Omitido = nenhuma imagem extra em nenhuma das duas telas.
    */
   imagemDestaque?: string;
+  /** Aumenta o tamanho dos dentes no odontograma clicável. Padrão: false. */
+  odontogramaGrande?: boolean;
+  /** Oculta o nome escrito ao lado da logo no cabeçalho da barra lateral, mostrando só a imagem. Padrão: false. */
+  sidebarLogoSomenteImagem?: boolean;
   compatibilidades?: string[];
 }

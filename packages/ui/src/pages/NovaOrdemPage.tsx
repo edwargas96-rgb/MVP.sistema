@@ -109,7 +109,7 @@ export function NovaOrdemPage() {
 
         <Card className="p-5">
           <Label>Elementos ou dentes</Label>
-          <Odontogram selected={elementos} onChange={setElementos} />
+          <Odontogram selected={elementos} onChange={setElementos} grande={brand.odontogramaGrande} />
         </Card>
 
         <Card className="grid gap-4 p-5 sm:grid-cols-2">

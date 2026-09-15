@@ -76,7 +76,7 @@ export function OrdemDetalhePage() {
 
           <Card className="p-5">
             <Label>Elementos</Label>
-            <Odontogram selected={order.elementos} readOnly />
+            <Odontogram selected={order.elementos} readOnly grande={brand.odontogramaGrande} />
           </Card>
 
           <Card className="p-5">

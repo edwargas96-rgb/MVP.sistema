@@ -45,76 +45,89 @@ export function DashboardPage() {
         )
       }
     >
-      {isLab && (
-        <div
-          className="mb-6 grid gap-3"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}
-        >
-          {cards.map((card) => (
-            <div
-              key={card.label}
-              className="rounded-xl border p-4 shadow-sm"
-              style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>{card.label}</span>
-                <card.icone className="size-4" style={{ color: card.cor }} />
-              </div>
-              <div className="mt-2 text-3xl font-semibold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-mono)" }}>
-                {card.valor}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="overflow-hidden rounded-xl border shadow-sm" style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}>
-        {ordenadas.length === 0 ? (
-          <div className="p-10 text-center">
-            <EmptyState
-              title="Nenhuma ordem por aqui ainda"
-              description="Assim que uma ordem de serviço for aberta, ela aparece aqui."
-              action={
-                !isLab && (
-                  <Link to="/nova-ordem">
-                    <Button>Abrir primeira ordem</Button>
-                  </Link>
-                )
-              }
-            />
-          </div>
-        ) : (
-          <ul className="divide-y" style={{ borderColor: "var(--brand-border)" }}>
-            {ordenadas.map((order: Order) => (
-              <li key={order.id}>
-                <Link
-                  to={`/ordens/${order.id}`}
-                  className="flex flex-col gap-2 px-4 py-4 transition-colors hover:bg-black/[0.03] sm:flex-row sm:items-center sm:gap-4"
-                >
-                  <span
-                    className="w-20 shrink-0 text-sm font-semibold"
-                    style={{ color: "var(--brand-primary)", fontFamily: "var(--brand-font-mono)" }}
-                  >
-                    {order.numero}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate font-medium" style={{ color: "var(--brand-text)" }}>
-                      {order.paciente}
-                    </div>
-                    <div className="truncate text-sm" style={{ color: "var(--brand-text-secondary)" }}>
-                      {[order.servico, isLab ? clinicName(order.clinicId) : null].filter(Boolean).join(" · ") || "—"}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {order.urgente && <UrgentBadge />}
-                    <PrazoBadge order={order} />
-                    <StatusBadge status={order.status} />
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <div className="relative min-h-[560px]">
+        {brand.imagemDestaque && (
+          <img
+            src={brand.imagemDestaque}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute -right-20 top-0 hidden h-[560px] w-auto opacity-[0.11] md:block lg:-right-12 lg:h-[640px]"
+          />
         )}
+
+        <div className="relative">
+          {isLab && (
+            <div
+              className="mb-6 grid gap-3"
+              style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}
+            >
+              {cards.map((card) => (
+                <div
+                  key={card.label}
+                  className="rounded-xl border p-4 shadow-sm"
+                  style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>{card.label}</span>
+                    <card.icone className="size-4" style={{ color: card.cor }} />
+                  </div>
+                  <div className="mt-2 text-3xl font-semibold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-mono)" }}>
+                    {card.valor}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="overflow-hidden rounded-xl border shadow-sm" style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}>
+            {ordenadas.length === 0 ? (
+              <div className="p-10 text-center">
+                <EmptyState
+                  title="Nenhuma ordem por aqui ainda"
+                  description="Assim que uma ordem de serviço for aberta, ela aparece aqui."
+                  action={
+                    !isLab && (
+                      <Link to="/nova-ordem">
+                        <Button>Abrir primeira ordem</Button>
+                      </Link>
+                    )
+                  }
+                />
+              </div>
+            ) : (
+              <ul className="divide-y" style={{ borderColor: "var(--brand-border)" }}>
+                {ordenadas.map((order: Order) => (
+                  <li key={order.id}>
+                    <Link
+                      to={`/ordens/${order.id}`}
+                      className="flex flex-col gap-2 px-4 py-4 transition-colors hover:bg-black/[0.03] sm:flex-row sm:items-center sm:gap-4"
+                    >
+                      <span
+                        className="w-20 shrink-0 text-sm font-semibold"
+                        style={{ color: "var(--brand-primary)", fontFamily: "var(--brand-font-mono)" }}
+                      >
+                        {order.numero}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-medium" style={{ color: "var(--brand-text)" }}>
+                          {order.paciente}
+                        </div>
+                        <div className="truncate text-sm" style={{ color: "var(--brand-text-secondary)" }}>
+                          {[order.servico, isLab ? clinicName(order.clinicId) : null].filter(Boolean).join(" · ") || "—"}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {order.urgente && <UrgentBadge />}
+                        <PrazoBadge order={order} />
+                        <StatusBadge status={order.status} />
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
       </div>
     </AppShell>
   );

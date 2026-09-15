@@ -38,9 +38,10 @@ const LAB_ITEMS: NavItem[] = [
 ];
 
 function SidebarHeader() {
+  const brand = useBrand();
   return (
     <div className="flex min-w-0 items-center gap-3 overflow-hidden px-5 py-6">
-      <Logo size="md" variant="sidebar" />
+      <Logo size={brand.sidebarLogoSomenteImagem ? "lg" : "md"} variant="sidebar" showText={!brand.sidebarLogoSomenteImagem} />
     </div>
   );
 }

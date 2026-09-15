@@ -88,4 +88,6 @@ export const brand: BrandConfig = {
   },
   logoPath: "/brand/logo.webp",
   imagemDestaque: "/brand/logo_lv_dente.png",
+  odontogramaGrande: true,
+  sidebarLogoSomenteImagem: true,
 };
