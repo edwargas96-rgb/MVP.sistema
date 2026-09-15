@@ -14,6 +14,14 @@ function isSameDay(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
+function formatPrazoCurto(iso: string) {
+  const d = new Date(iso);
+  const dia = WEEKDAYS[d.getDay()].toLowerCase();
+  const hora = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  const data = d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  return `${dia} · ${hora} · ${data}`;
+}
+
 export function CalendarView({ orders, onSelect }: { orders: Order[]; onSelect: (order: Order) => void }) {
   const brand = useBrand();
   const ultimoStatus = brand.statusFlow[brand.statusFlow.length - 1];
@@ -122,6 +130,12 @@ export function CalendarView({ orders, onSelect }: { orders: Order[]; onSelect: 
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    <span
+                      className="text-xs whitespace-nowrap"
+                      style={{ color: "var(--brand-text-secondary)", fontFamily: "var(--brand-font-mono)" }}
+                    >
+                      {formatPrazoCurto(order.prazo)}
+                    </span>
                     <PrazoBadge order={order} />
                     <StatusBadge status={order.status} />
                   </div>
