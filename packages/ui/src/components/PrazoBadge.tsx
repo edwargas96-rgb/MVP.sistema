@@ -23,16 +23,8 @@ export function prazoInfo(order: Order, statusFlow: string[]): { tipo: PrazoTipo
 }
 
 function toneVars(brand: BrandConfig, tipo: PrazoTipo) {
-  switch (tipo) {
-    case "atrasada":
-      return { bg: brand.cores.statusErroBg, text: brand.cores.statusErroTexto };
-    case "proxima":
-      return { bg: brand.cores.statusAlertaBg, text: brand.cores.statusAlertaTexto };
-    case "concluida":
-      return { bg: brand.cores.statusSucessoBg, text: brand.cores.statusSucessoTexto };
-    default:
-      return { bg: brand.cores.statusNeutroBg, text: brand.cores.statusNeutroTexto };
-  }
+  if (tipo === "atrasada") return { bg: brand.cores.statusErroBg, text: brand.cores.statusErroTexto };
+  return { bg: brand.cores.statusNeutroBg, text: brand.cores.statusNeutroTexto };
 }
 
 export function PrazoBadge({ order }: { order: Order }) {

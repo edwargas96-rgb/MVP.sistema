@@ -69,7 +69,6 @@ export function FileUpload({
           {files.map((f) => (
             <li key={f.id} className="flex items-center justify-between px-3 py-2">
               <span className="flex items-center gap-2 truncate">
-                <span aria-hidden>{f.tipo === "foto" ? "🖼️" : "📄"}</span>
                 <span className="truncate">{f.nome}</span>
                 <span className="text-xs" style={{ color: "var(--brand-text-secondary)" }}>
                   {f.tamanhoKb} KB

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FilePlus, Inbox, PackageCheck, TriangleAlert } from "lucide-react";
+import { FilePlus } from "lucide-react";
 import { useData } from "../hooks/DataProvider";
 import { AppShell } from "../components/AppShell";
 import { Button, EmptyState, StatusBadge, UrgentBadge } from "../components/primitives";
@@ -13,18 +13,14 @@ export function DashboardPage() {
   const isLab = currentUser?.role === "laboratorio";
 
   const ultimoStatus = brand.statusFlow[brand.statusFlow.length - 1];
-  const statusCards = brand.dashboard.statCards.filter((c) => c.tipo === "status");
 
-  const cards = brand.dashboard.statCards.map((card, i) => {
+  const cards = brand.dashboard.statCards.map((card) => {
     if (card.tipo === "atrasadas") {
       const valor = visibleOrders.filter((o) => o.status !== ultimoStatus && new Date(o.prazo) < new Date()).length;
-      return { label: card.label, valor, icone: TriangleAlert, cor: "var(--brand-status-erro-text)" };
+      return { label: card.label, valor, cor: "var(--brand-status-erro-text)" };
     }
     const valor = visibleOrders.filter((o) => card.statuses?.includes(o.status)).length;
-    const posicao = statusCards.indexOf(card);
-    const ultima = posicao === statusCards.length - 1;
-    const cor = posicao === 0 ? "var(--brand-primary)" : ultima ? "var(--brand-status-sucesso-text)" : "var(--brand-status-alerta-text)";
-    return { label: card.label, valor, icone: posicao === 0 ? Inbox : PackageCheck, cor };
+    return { label: card.label, valor, cor: "var(--brand-text)" };
   });
 
   const ordenadas = [...visibleOrders].sort(
@@ -48,7 +44,7 @@ export function DashboardPage() {
       {isLab && brand.dashboardDestaque && (
         <div
           className="mb-6 rounded-xl border p-5"
-          style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-status-info-bg)" }}
+          style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
         >
           <h3 className="font-semibold" style={{ color: "var(--brand-primary)", fontFamily: "var(--brand-font-title)" }}>
             {brand.dashboardDestaque.titulo}
@@ -70,11 +66,8 @@ export function DashboardPage() {
               className="rounded-xl border p-4 shadow-sm"
               style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
             >
-              <div className="flex items-center justify-between">
-                <span className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>{card.label}</span>
-                <card.icone className="size-4" style={{ color: card.cor }} />
-              </div>
-              <div className="mt-2 text-3xl font-semibold" style={{ color: "var(--brand-text)", fontFamily: "var(--brand-font-mono)" }}>
+              <span className="text-sm" style={{ color: "var(--brand-text-secondary)" }}>{card.label}</span>
+              <div className="mt-2 text-3xl font-semibold" style={{ color: card.cor, fontFamily: "var(--brand-font-mono)" }}>
                 {card.valor}
               </div>
             </div>
