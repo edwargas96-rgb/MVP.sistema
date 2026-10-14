@@ -4,65 +4,77 @@ import { Tip, TipKind, tips } from "./tips";
 const KINDS: Array<"Todas" | TipKind> = ["Todas", "Receitas", "Suplementos", "Rotina"];
 
 /** Dicas rápidas: receitas, suplementos e rotina. */
-const INTERVAL = 6500; // tempo de leitura de cada dica
+const DWELL = 6000; // tempo com a dica destacada na esquerda
+const MOVE_MS = 1100; // deslize lento até a próxima
+const GAP = 12;
 const PAUSE_AFTER_TOUCH = 12000;
 
+/** Dicas em fila infinita: a da esquerda fica em destaque, depois a fila anda e a próxima assume. */
 export default function Tips({ onSearch }: { onSearch: (term: string) => void }) {
   const [kind, setKind] = useState<(typeof KINDS)[number]>("Todas");
   const [open, setOpen] = useState<Tip | null>(null);
-  const [active, setActive] = useState(0);
   const list = tips.filter((t) => kind === "Todas" || t.kind === kind);
+  const n = list.length;
 
-  const track = useRef<HTMLDivElement>(null);
+  const [start, setStart] = useState(0); // índice da dica que está na esquerda
+  const [moving, setMoving] = useState(false);
+  const [shift, setShift] = useState(0);
   const cards = useRef<Array<HTMLButtonElement | null>>([]);
+  const movingRef = useRef(false);
+  const commit = useRef<ReturnType<typeof setTimeout>>();
   const hover = useRef(false);
   const pausedUntil = useRef(0);
-  const settle = useRef<ReturnType<typeof setTimeout>>();
+  const [tick, setTick] = useState(0);
+  const drag = useRef<{ x: number; swiped: boolean } | null>(null);
+  const swipedRecently = useRef(false);
 
-  const goTo = useCallback((i: number) => {
-    const t = track.current, c = cards.current[i];
-    if (!t || !c) return;
-    // Rola só o carrossel (não a página), deixando o card no centro.
-    t.scrollTo({ left: c.offsetLeft - (t.clientWidth - c.clientWidth) / 2, behavior: "smooth" });
-  }, []);
-
-  // Ao trocar o filtro, volta para a primeira dica.
-  useEffect(() => {
-    setActive(0);
-    track.current?.scrollTo({ left: 0 });
-  }, [kind]);
-
-  // Passa uma dica por vez, devagar. Pausa com mouse em cima, toque recente, janela aberta ou "reduzir movimento".
-  useEffect(() => {
-    if (open || list.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => {
-      if (hover.current || Date.now() < pausedUntil.current || document.hidden) return;
-      setActive((i) => {
-        const n = (i + 1) % list.length;
-        goTo(n);
-        return n;
-      });
-    }, INTERVAL);
-    return () => clearInterval(id);
-  }, [open, list.length, goTo]);
-
-  // Se a pessoa arrastar o carrossel, destaca o card que ficou no centro.
-  const onScroll = () => {
-    clearTimeout(settle.current);
-    settle.current = setTimeout(() => {
-      const t = track.current;
-      if (!t) return;
-      const mid = t.scrollLeft + t.clientWidth / 2;
-      let best = 0, dist = Infinity;
-      cards.current.forEach((c, i) => {
-        if (!c) return;
-        const d = Math.abs(c.offsetLeft + c.clientWidth / 2 - mid);
-        if (d < dist) { dist = d; best = i; }
-      });
-      setActive(best);
-    }, 140);
-  };
   const touched = () => { pausedUntil.current = Date.now() + PAUSE_AFTER_TOUCH; };
+
+  // Anda uma posição: desliza a fila e, ao final, passa a primeira para o fim (sem pulo visual).
+  const advance = useCallback(() => {
+    const first = cards.current[0];
+    if (movingRef.current || n < 2 || !first) return;
+    movingRef.current = true;
+    setShift(first.offsetWidth + GAP);
+    setMoving(true);
+    commit.current = setTimeout(() => {
+      movingRef.current = false;
+      setMoving(false);
+      setShift(0);
+      setStart((s) => (s + 1) % n);
+    }, MOVE_MS);
+  }, [n]);
+
+  // Trocar o filtro reinicia a fila.
+  useEffect(() => {
+    clearTimeout(commit.current);
+    movingRef.current = false;
+    setMoving(false);
+    setShift(0);
+    setStart(0);
+  }, [kind]);
+  useEffect(() => () => clearTimeout(commit.current), []);
+
+  // Rodando sozinho. Pausa com mouse em cima, toque recente, janela aberta, aba oculta ou "reduzir movimento".
+  useEffect(() => {
+    if (open || n < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setTimeout(() => {
+      if (hover.current || Date.now() < pausedUntil.current || document.hidden) setTick((k) => k + 1);
+      else advance();
+    }, DWELL);
+    return () => clearTimeout(t);
+  }, [start, tick, open, n, advance]);
+
+  const jumpTo = (i: number) => {
+    touched();
+    clearTimeout(commit.current);
+    movingRef.current = false;
+    setMoving(false);
+    setShift(0);
+    setStart(((i % n) + n) % n);
+  };
+
+  const ordered = list.map((_, i) => list[(start + i) % n]);
 
   return (
     <section aria-labelledby="dicas">
@@ -74,35 +86,52 @@ export default function Tips({ onSearch }: { onSearch: (term: string) => void })
       </div>
 
       <div
-        ref={track}
-        onScroll={onScroll}
+        className="-mx-4 overflow-hidden py-2"
+        style={{ touchAction: "pan-y" }}
         onMouseEnter={() => (hover.current = true)}
         onMouseLeave={() => (hover.current = false)}
-        onPointerDown={touched}
-        onWheel={touched}
-        className="no-scrollbar relative -mx-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 py-2"
+        onPointerDown={(e) => { touched(); drag.current = { x: e.clientX, swiped: false }; }}
+        onPointerUp={(e) => {
+          const d = drag.current;
+          drag.current = null;
+          if (!d) return;
+          const dx = e.clientX - d.x;
+          if (Math.abs(dx) > 40) {
+            d.swiped = true;
+            swipedRecently.current = true;
+            setTimeout(() => (swipedRecently.current = false), 50);
+            if (dx < 0) advance(); else jumpTo(start - 1);
+          }
+        }}
         aria-roledescription="carrossel"
         aria-label="Dicas da Life"
       >
-        <span aria-hidden className="w-[3%] shrink-0 sm:w-[calc(50%-10.5rem)]" />
-        {list.map((t, i) => (
-          <button
-            key={t.id}
-            ref={(el) => (cards.current[i] = el)}
-            onClick={() => { touched(); setOpen(t); }}
-            onFocus={touched}
-            aria-label={`${t.kind}: ${t.title}. Ler dica`}
-            className={`cut-sm w-[88%] shrink-0 snap-center border p-4 text-left transition-all duration-700 sm:w-80 ${
-              i === active ? "scale-100 border-brand bg-brand-soft opacity-100" : "scale-[0.94] border-steel bg-plate opacity-50"
-            }`}
-          >
-            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-brand">{t.kind}</span>
-            <span className="title mt-1 block text-2xl">{t.title}</span>
-            <span className="mt-2 block text-sm text-neutral-300">{t.summary}</span>
-            <span className="mt-3 block text-sm font-bold text-brand">Ler dica →</span>
-          </button>
-        ))}
-        <span aria-hidden className="w-[3%] shrink-0 sm:w-[calc(50%-10.5rem)]" />
+        <div
+          className="flex px-4"
+          style={{ gap: GAP, transform: `translateX(${-shift}px)`, transition: moving ? `transform ${MOVE_MS}ms cubic-bezier(.45,.05,.25,1)` : "none" }}
+        >
+          {ordered.map((t, i) => {
+            const on = moving ? i === 1 : i === 0;
+            return (
+              <button
+                key={t.id}
+                ref={(el) => (cards.current[i] = el)}
+                onClick={() => { if (swipedRecently.current) return; touched(); setOpen(t); }}
+                onFocus={touched}
+                aria-label={`${t.kind}: ${t.title}. Ler dica`}
+                className={`cut-sm w-[88%] shrink-0 border p-4 text-left transition-all duration-700 sm:w-80 ${
+                  on ? "scale-100 border-brand bg-brand-soft opacity-100" : "scale-[0.95] border-steel bg-plate opacity-50"
+                }`}
+                style={{ transformOrigin: "left center" }}
+              >
+                <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-brand">{t.kind}</span>
+                <span className="title mt-1 block text-2xl">{t.title}</span>
+                <span className="mt-2 block text-sm text-neutral-300">{t.summary}</span>
+                <span className="mt-3 block text-sm font-bold text-brand">Ler dica →</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="mt-2 flex items-center justify-center gap-2" role="tablist" aria-label="Escolher dica">
@@ -110,10 +139,10 @@ export default function Tips({ onSearch }: { onSearch: (term: string) => void })
           <button
             key={t.id}
             role="tab"
-            aria-selected={i === active}
+            aria-selected={i === start}
             aria-label={`Dica ${i + 1}: ${t.title}`}
-            onClick={() => { touched(); setActive(i); goTo(i); }}
-            className={`h-2 rounded-full transition-all duration-500 ${i === active ? "w-6 bg-brand" : "w-2 bg-steel"}`}
+            onClick={() => jumpTo(i)}
+            className={`h-2 rounded-full transition-all duration-500 ${i === start ? "w-6 bg-brand" : "w-2 bg-steel"}`}
           />
         ))}
       </div>
