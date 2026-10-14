@@ -3,6 +3,7 @@ import { GOALS } from "./brand";
 import Cart from "./Cart";
 import KitBuilder from "./KitBuilder";
 import ProductCard from "./ProductCard";
+import Tips from "./Tips";
 import { StoriesRow, StoryViewer } from "./Stories";
 import { isHighlight, useNow, useOrders } from "./store";
 import type { CartLine, Product, Settings } from "./types";
@@ -56,6 +57,8 @@ export default function Shop({ products, settings, cart, setCart }: Props) {
 
       <main className="mx-auto max-w-5xl space-y-8 px-4 py-6">
         <StoriesRow items={highlights} onOpen={setStory} />
+
+        <Tips onSearch={(term) => { setQuery(term); setCategory("Todas"); setGoal(null); setOnlyPromo(false); setTimeout(() => document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" }), 50); }} />
 
         <section aria-labelledby="goals">
           <h2 id="goals" className="title mb-3 text-3xl">Qual é o seu objetivo?</h2>
