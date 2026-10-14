@@ -166,6 +166,19 @@ function SettingsForm({ settings, onSave }: { settings: Settings; onSave: (s: Se
           ))}
         </div>
       </div>
+      <div>
+        <label className="label">Cupons de desconto</label>
+        <div className="space-y-2">
+          {s.coupons.map((c, i) => (
+            <div key={i} className="flex gap-2">
+              <input className="input font-mono uppercase" placeholder="CÓDIGO" value={c.code} onChange={(e) => setS({ ...s, coupons: s.coupons.map((x, n) => (n === i ? { ...x, code: e.target.value.replace(/\s/g, "") } : x)) })} />
+              <input className="input w-24" inputMode="numeric" placeholder="%" value={c.percent || ""} onChange={(e) => setS({ ...s, coupons: s.coupons.map((x, n) => (n === i ? { ...x, percent: Math.min(100, Number(e.target.value) || 0) } : x)) })} />
+              <button type="button" className="btn-ghost text-alert" aria-label="Remover cupom" onClick={() => setS({ ...s, coupons: s.coupons.filter((_, n) => n !== i) })}>✕</button>
+            </div>
+          ))}
+          <button type="button" className="btn-ghost" onClick={() => setS({ ...s, coupons: [...s.coupons, { code: "", percent: 10 }] })}>+ Novo cupom</button>
+        </div>
+      </div>
       <div><label className="label">PIN do painel</label><input className="input" value={s.adminPin} onChange={(e) => setS({ ...s, adminPin: e.target.value })} /></div>
       <button className="btn-primary">Salvar configurações</button>
     </form>

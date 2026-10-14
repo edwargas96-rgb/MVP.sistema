@@ -13,6 +13,7 @@ export function buildOrderMessage(settings: Settings, number: string, priced: Pr
   if (normal.length) out.push("*Itens*", ...normal.map(row), "");
   if (kit.length) out.push(`*Kit montado${priced.kitPercent ? ` (-${priced.kitPercent}%)` : ""}*`, ...kit.map(row), "");
   if (priced.kitDiscount > 0) out.push(`Desconto do kit: -${brl(priced.kitDiscount)}`);
+  if (priced.coupon && priced.couponDiscount > 0) out.push(`Cupom ${priced.coupon.code.toUpperCase()} (-${priced.coupon.percent}%): -${brl(priced.couponDiscount)}`);
   out.push(`*Total: ${brl(priced.total)}*`, "");
   out.push(`*Cliente:* ${c.name}`);
   out.push(`*Recebimento:* ${c.delivery === "entrega" ? `Entrega — ${c.address}` : "Retirada na loja"}`);

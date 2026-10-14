@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { defaultSettings } from "./brand";
 import { seedProducts } from "./seed";
-import type { CartLine, Order, Product, Settings } from "./types";
+import type { CartLine, Coupon, Order, Product, Settings } from "./types";
 
 const NS = "life-energy-store:";
 
@@ -25,7 +25,7 @@ function usePersisted<T>(key: string, initial: T, revive: (stored: T) => T = (v)
   return [value, setValue] as const;
 }
 
-export const useProducts = () => usePersisted<Product[]>("products-v3", seedProducts);
+export const useProducts = () => usePersisted<Product[]>("products-v4", seedProducts);
 export const useSettings = () => usePersisted<Settings>("settings", defaultSettings, (s) => ({ ...defaultSettings, ...s }));
 export const useCart = () => usePersisted<CartLine[]>("cart", []);
 export const useOrders = () => usePersisted<Order[]>("orders", []);
@@ -66,7 +66,7 @@ export interface PricedLine {
 }
 
 /** Totais do pedido, com desconto do kit montado. */
-export function priceOrder(lines: CartLine[], products: Product[], settings: Settings, now = Date.now()) {
+export function priceOrder(lines: CartLine[], products: Product[], settings: Settings, now = Date.now(), coupon: Coupon | null = null) {
   const rows: PricedLine[] = lines.flatMap((line) => {
     const product = products.find((p) => p.id === line.productId && p.active);
     if (!product) return [];
@@ -80,8 +80,14 @@ export function priceOrder(lines: CartLine[], products: Product[], settings: Set
   const kitPercent = tiers.reduce((best, t) => (kitItems >= t.items ? t.percent : best), 0);
   const kitDiscount = Math.round(sum(kitRows) * kitPercent) / 100;
   const subtotal = sum(rows);
-  return { rows, kitItems, kitPercent, kitDiscount, subtotal, total: subtotal - kitDiscount };
+  const afterKit = subtotal - kitDiscount;
+  const couponDiscount = coupon ? Math.round(afterKit * coupon.percent) / 100 : 0;
+  return { rows, kitItems, kitPercent, kitDiscount, subtotal, coupon, couponDiscount, total: afterKit - couponDiscount };
 }
+
+/** Procura o cupom digitado (ignora maiúsculas e espaços). */
+export const findCoupon = (settings: Settings, code: string) =>
+  settings.coupons.find((c) => c.code.trim().toUpperCase() === code.trim().toUpperCase() && c.percent > 0) ?? null;
 
 export function nextOrderNumber(orders: Order[]) {
   const d = new Date();

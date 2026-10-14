@@ -25,6 +25,7 @@ export default function Tips({ onSearch }: { onSearch: (term: string) => void })
   const hover = useRef(false);
   const pausedUntil = useRef(0);
   const [tick, setTick] = useState(0);
+  const [paused, setPaused] = useState(false);
   const drag = useRef<{ x: number; swiped: boolean } | null>(null);
   const swipedRecently = useRef(false);
 
@@ -34,6 +35,10 @@ export default function Tips({ onSearch }: { onSearch: (term: string) => void })
   const advance = useCallback(() => {
     const first = cards.current[0];
     if (movingRef.current || n < 2 || !first) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setStart((s) => (s + 1) % n); // troca direta, sem deslizar
+      return;
+    }
     movingRef.current = true;
     setShift(first.offsetWidth + GAP);
     setMoving(true);
@@ -57,13 +62,13 @@ export default function Tips({ onSearch }: { onSearch: (term: string) => void })
 
   // Rodando sozinho. Pausa com mouse em cima, toque recente, janela aberta, aba oculta ou "reduzir movimento".
   useEffect(() => {
-    if (open || n < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (open || paused || n < 2) return;
     const t = setTimeout(() => {
       if (hover.current || Date.now() < pausedUntil.current || document.hidden) setTick((k) => k + 1);
       else advance();
     }, DWELL);
     return () => clearTimeout(t);
-  }, [start, tick, open, n, advance]);
+  }, [start, tick, open, paused, n, advance]);
 
   const jumpTo = (i: number) => {
     touched();
@@ -88,8 +93,8 @@ export default function Tips({ onSearch }: { onSearch: (term: string) => void })
       <div
         className="-mx-4 overflow-hidden py-2"
         style={{ touchAction: "pan-y" }}
-        onMouseEnter={() => (hover.current = true)}
-        onMouseLeave={() => (hover.current = false)}
+        onPointerEnter={(e) => { if (e.pointerType === "mouse") hover.current = true; }}
+        onPointerLeave={() => (hover.current = false)}
         onPointerDown={(e) => { touched(); drag.current = { x: e.clientX, swiped: false }; }}
         onPointerUp={(e) => {
           const d = drag.current;
@@ -134,7 +139,11 @@ export default function Tips({ onSearch }: { onSearch: (term: string) => void })
         </div>
       </div>
 
-      <div className="mt-2 flex items-center justify-center gap-2" role="tablist" aria-label="Escolher dica">
+      <div className="mt-2 flex items-center justify-center gap-3">
+      <button type="button" onClick={() => setPaused((v) => !v)} aria-pressed={paused} className="rounded border border-steel px-2 py-0.5 font-mono text-[11px] font-bold uppercase text-neutral-300 hover:border-brand">
+        {paused ? "▶ Continuar" : "❚❚ Pausar"}
+      </button>
+      <div className="flex items-center gap-2" role="tablist" aria-label="Escolher dica">
         {list.map((t, i) => (
           <button
             key={t.id}
@@ -145,6 +154,7 @@ export default function Tips({ onSearch }: { onSearch: (term: string) => void })
             className={`h-2 rounded-full transition-all duration-500 ${i === start ? "w-6 bg-brand" : "w-2 bg-steel"}`}
           />
         ))}
+      </div>
       </div>
 
       <p className="mt-2 text-xs text-neutral-500">Informações gerais, sem substituir a orientação de médico ou nutricionista.</p>

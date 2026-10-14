@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { PAYMENTS } from "./brand";
-import { brl, nextOrderNumber, priceOrder } from "./store";
+import { brl, findCoupon, nextOrderNumber, priceOrder } from "./store";
 import type { CartLine, Customer, Order, Product, Settings } from "./types";
 import { buildOrderMessage, whatsappUrl } from "./whatsapp";
 
@@ -17,7 +17,16 @@ interface Props {
 
 export default function Cart({ products, settings, cart, setCart, orders, setOrders, now, onClose }: Props) {
   const [c, setC] = useState<Customer>({ name: "", delivery: "retirada", address: "", payment: "pix", notes: "" });
-  const priced = priceOrder(cart, products, settings, now);
+  const [codeInput, setCodeInput] = useState("");
+  const [appliedCode, setAppliedCode] = useState("");
+  const [couponMsg, setCouponMsg] = useState("");
+  const coupon = appliedCode ? findCoupon(settings, appliedCode) : null;
+  const priced = priceOrder(cart, products, settings, now, coupon);
+  const applyCoupon = () => {
+    const c = findCoupon(settings, codeInput);
+    if (c) { setAppliedCode(c.code); setCouponMsg(""); setCodeInput(""); }
+    else setCouponMsg(codeInput.trim() ? "Cupom inválido ou expirado." : "Digite o código do cupom.");
+  };
   const same = (a: CartLine, b: CartLine) => a.productId === b.productId && !!a.kit === !!b.kit;
   const setQty = (l: CartLine, qty: number) => setCart(cart.flatMap((x) => (!same(x, l) ? [x] : qty > 0 ? [{ ...x, qty }] : [])));
   const valid = priced.rows.length > 0 && c.name.trim() && (c.delivery === "retirada" || c.address.trim());
@@ -74,8 +83,26 @@ export default function Cart({ products, settings, cart, setCart, orders, setOrd
             </div>
           )}
         </div>
-        <div className="space-y-1 border-t p-4">
+        <div className="space-y-2 border-t p-4">
+          {priced.rows.length > 0 && (
+            <div>
+              <label className="label" htmlFor="cupom">Cupom de desconto</label>
+              {coupon ? (
+                <div className="flex items-center justify-between rounded-md border border-brand bg-brand-soft px-3 py-2 text-sm">
+                  <span><b className="font-mono text-brand">{coupon.code.toUpperCase()}</b> aplicado · −{coupon.percent}%</span>
+                  <button className="font-bold text-neutral-300 underline" onClick={() => setAppliedCode("")}>Remover</button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input id="cupom" className="input font-mono uppercase" placeholder="Digite seu cupom" value={codeInput} onChange={(e) => { setCodeInput(e.target.value); setCouponMsg(""); }} onKeyDown={(e) => e.key === "Enter" && applyCoupon()} />
+                  <button className="btn-ghost shrink-0" onClick={applyCoupon}>Aplicar</button>
+                </div>
+              )}
+              {couponMsg && <p role="alert" className="mt-1 text-xs text-alert">{couponMsg}</p>}
+            </div>
+          )}
           {priced.kitDiscount > 0 && <div className="flex justify-between text-sm text-brand"><span>Desconto do kit ({priced.kitPercent}%)</span><span className="font-mono">−{brl(priced.kitDiscount)}</span></div>}
+          {priced.couponDiscount > 0 && <div className="flex justify-between text-sm text-brand"><span>Cupom {priced.coupon!.code.toUpperCase()} ({priced.coupon!.percent}%)</span><span className="font-mono">−{brl(priced.couponDiscount)}</span></div>}
           <div className="flex justify-between"><span className="title text-xl">Total</span><span className="title text-3xl text-brand">{brl(priced.total)}</span></div>
           <button className="btn-primary w-full" disabled={!valid} onClick={send}>Enviar pedido pelo WhatsApp</button>
           <p className="text-center text-xs text-neutral-500">O pedido abre no WhatsApp da loja com um número de acompanhamento. O pagamento é combinado por lá.</p>

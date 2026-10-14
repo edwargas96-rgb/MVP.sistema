@@ -26,6 +26,13 @@ export interface KitTier {
   percent: number;
 }
 
+export interface Coupon {
+  /** Código digitado pelo cliente (sem diferenciar maiúsculas). */
+  code: string;
+  /** Desconto em % sobre o pedido (já com o desconto do kit). */
+  percent: number;
+}
+
 export interface Settings {
   storeName: string;
   /** Somente dígitos, com DDI+DDD. Ex.: 5511999999999 */
@@ -36,6 +43,8 @@ export interface Settings {
   adminPin: string;
   /** Descontos do "Monte seu kit". */
   kitTiers: KitTier[];
+  /** Cupons aceitos no fechamento do pedido. */
+  coupons: Coupon[];
 }
 
 export interface CartLine {

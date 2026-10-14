@@ -11,6 +11,8 @@ export const defaultSettings: Settings = {
     { items: 3, percent: 8 },
     { items: 4, percent: 10 },
   ],
+  // Exemplo para demonstração: o dono cria/remove cupons em Configurações.
+  coupons: [{ code: "LIFE10", percent: 10 }],
 };
 
 export const CATEGORIES = ["Suplementos", "Vestuário", "Acessórios", "Bebidas e Snacks", "Outros"];
