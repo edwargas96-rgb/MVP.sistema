@@ -17,6 +17,15 @@ Um lugar onde o dono publica produtos e promoções, e o cliente monta o pedido 
 - Mostrar/ocultar produto sem excluir
 - Configurações: nome da loja, WhatsApp, faixa de aviso, PIN
 
+## Diferenciais (v0.2)
+- **Cronômetro nas promoções** (`promoEndsAt`): ao fim do prazo o preço volta ao normal sozinho; aviso "restam N" (`unitsLeft`)
+- **Compra por objetivo**: ganhar massa, energia, definição, saúde (produtos marcados no painel)
+- **Monte seu kit**: desconto por quantidade (5/8/10% são EXEMPLOS, o dono ajusta em Configurações)
+- **Vitrine estilo stories** com as promoções ativas
+- **Pedido WhatsApp organizado**: número `LE-DDMM-001`, itens, desconto, recebimento, pagamento; histórico local em "Pedidos"
+- Visual: preto/amarelo, títulos condensados, cantos cortados (etiqueta de anilha)
+- Fora: pontos de fidelidade (decidido não fazer por ora)
+
 ## Fora do MVP (decisões conscientes)
 - Pagamento online, estoque, frete calculado, login real: o pedido é fechado conversando no WhatsApp
 - **Os dados ficam só no navegador de quem edita.** Ou seja, hoje o dono edita no próprio aparelho e os clientes NÃO veem essas mudanças. O PIN é proteção leve no front-end, não segurança real.

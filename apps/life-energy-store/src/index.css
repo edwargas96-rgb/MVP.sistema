@@ -2,9 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-body { @apply bg-neutral-50 font-sans text-ink antialiased; }
-.btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition disabled:opacity-50; }
-.btn-primary { @apply btn bg-brand text-black hover:bg-yellow-300; }
-.btn-ghost { @apply btn border border-neutral-300 bg-white hover:bg-neutral-100; }
-.input { @apply w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20; }
-.label { @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-500; }
+@layer base {
+  * { border-color: #26262a; }
+  body { @apply bg-ink font-sans text-bone antialiased; }
+  :focus-visible { outline: 2px solid #FACC15; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+}
+
+@layer components {
+  /* Assinatura: canto inferior direito cortado, como etiqueta de anilha/preço. */
+  .cut { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%); }
+  .cut-sm { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%); }
+  .title { @apply font-display font-extrabold uppercase leading-none tracking-wide; }
+  .btn { @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-40; }
+  .btn-primary { @apply btn cut-sm bg-brand text-black hover:bg-yellow-300; }
+  .btn-ghost { @apply btn rounded-md border border-steel bg-plate text-bone hover:border-brand; }
+  .input { @apply w-full rounded-md border border-steel bg-plate px-3 py-2 text-sm text-bone outline-none placeholder:text-neutral-500 focus:border-brand; }
+  .label { @apply mb-1 block font-mono text-[11px] font-bold uppercase tracking-wider text-neutral-400; }
+  .chip { @apply rounded-full border border-steel bg-plate px-3 py-1.5 text-sm font-medium text-neutral-300 transition hover:border-brand; }
+  .chip-on { @apply border-brand bg-brand text-black hover:border-brand; }
+  .ring-story { background: conic-gradient(from 200deg, #FACC15, #ff9f0a, #FACC15); }
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

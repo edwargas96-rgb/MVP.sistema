@@ -1,7 +1,11 @@
-import { useMemo, useState } from "react";
-import { brl, finalPrice, isHighlight, isPromo } from "./store";
-import type { CartLine, Customer, Product, Settings } from "./types";
-import { buildOrderMessage, whatsappUrl } from "./whatsapp";
+import { useState } from "react";
+import { GOALS } from "./brand";
+import Cart from "./Cart";
+import KitBuilder from "./KitBuilder";
+import ProductCard from "./ProductCard";
+import { StoriesRow, StoryViewer } from "./Stories";
+import { isHighlight, useNow, useOrders } from "./store";
+import type { CartLine, Product, Settings } from "./types";
 
 interface Props {
   products: Product[];
@@ -11,160 +15,98 @@ interface Props {
 }
 
 export default function Shop({ products, settings, cart, setCart }: Props) {
+  const now = useNow();
+  const [orders, setOrders] = useOrders();
   const [category, setCategory] = useState("Todas");
+  const [goal, setGoal] = useState<string | null>(null);
   const [onlyPromo, setOnlyPromo] = useState(false);
   const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
+  const [panel, setPanel] = useState<"cart" | "kit" | null>(null);
+  const [story, setStory] = useState<number | null>(null);
 
   const active = products.filter((p) => p.active);
-  const categories = useMemo(() => ["Todas", ...Array.from(new Set(active.map((p) => p.category)))], [active]);
-  const promos = active.filter(isHighlight);
+  const categories = ["Todas", ...Array.from(new Set(active.map((p) => p.category)))];
+  const highlights = active.filter((p) => isHighlight(p, now));
   const visible = active.filter(
     (p) =>
       (category === "Todas" || p.category === category) &&
-      (!onlyPromo || isHighlight(p)) &&
+      (!goal || p.goals?.includes(goal)) &&
+      (!onlyPromo || isHighlight(p, now)) &&
       p.name.toLowerCase().includes(query.toLowerCase()),
   );
 
   const count = cart.reduce((s, l) => s + l.qty, 0);
   const add = (id: string) => {
-    const l = cart.find((x) => x.productId === id);
-    setCart(l ? cart.map((x) => (x.productId === id ? { ...x, qty: x.qty + 1 } : x)) : [...cart, { productId: id, qty: 1 }]);
+    const l = cart.find((x) => x.productId === id && !x.kit);
+    setCart(l ? cart.map((x) => (x === l ? { ...x, qty: x.qty + 1 } : x)) : [...cart, { productId: id, qty: 1 }]);
   };
 
   return (
     <div className="min-h-screen">
-      {settings.banner && <div className="bg-ink px-4 py-2 text-center text-sm text-white">{settings.banner}</div>}
-      <header className="sticky top-0 z-10 border-b bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
-          <h1 className="flex items-center gap-2"><img src="./brand/logo.png" alt={settings.storeName} className="h-10 w-10 rounded-md" /><span className="font-display text-lg font-extrabold">{settings.storeName}</span></h1>
-          <button className="btn-primary" onClick={() => setOpen(true)}>
-            🛒 Pedido ({count})
-          </button>
+      {settings.banner && <div className="bg-brand px-4 py-1.5 text-center font-mono text-xs font-bold uppercase tracking-wider text-black">{settings.banner}</div>}
+      <header className="sticky top-0 z-10 border-b bg-ink/95 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-2.5">
+          <h1 className="flex items-center gap-2.5">
+            <img src="./brand/logo.png" alt="" className="h-10 w-10 rounded" />
+            <span className="title text-2xl">{settings.storeName}</span>
+          </h1>
+          <button className="btn-primary" onClick={() => setPanel("cart")}>Pedido · {count}</button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-6">
-        {promos.length > 0 && (
-          <section className="mb-6 rounded-2xl bg-brand-soft p-4">
-            <h2 className="font-display text-lg font-bold">🔥 Promoções ({promos.length})</h2>
-            <p className="text-sm text-neutral-600">Ofertas por tempo limitado.</p>
-            <button className="mt-2 text-sm font-semibold text-brand-dark underline" onClick={() => { setOnlyPromo(true); setCategory("Todas"); }}>
-              Ver só promoções
-            </button>
-          </section>
-        )}
+      <main className="mx-auto max-w-5xl space-y-8 px-4 py-6">
+        <StoriesRow items={highlights} onOpen={setStory} />
 
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row">
-          <input className="input sm:max-w-xs" placeholder="Buscar produto…" value={query} onChange={(e) => setQuery(e.target.value)} />
-          <div className="flex flex-wrap gap-2">
-            {categories.map((c) => (
-              <button key={c} onClick={() => setCategory(c)} className={`rounded-full border px-3 py-1 text-sm ${category === c ? "border-brand bg-brand text-black" : "bg-white"}`}>
-                {c}
+        <section aria-labelledby="goals">
+          <h2 id="goals" className="title mb-3 text-3xl">Qual é o seu objetivo?</h2>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {GOALS.map((g) => (
+              <button key={g.id} onClick={() => setGoal(goal === g.id ? null : g.id)} aria-pressed={goal === g.id}
+                className={`cut-sm border p-3 text-left transition ${goal === g.id ? "border-brand bg-brand text-black" : "border-steel bg-plate hover:border-brand"}`}>
+                <div className="title text-xl">{g.label}</div>
+                <div className={`mt-1 text-xs ${goal === g.id ? "text-black/70" : "text-neutral-400"}`}>{g.hint}</div>
               </button>
             ))}
-            <button onClick={() => setOnlyPromo(!onlyPromo)} className={`rounded-full border px-3 py-1 text-sm ${onlyPromo ? "border-brand bg-brand text-black" : "bg-white"}`}>
-              🔥 Promoções
-            </button>
           </div>
-        </div>
+        </section>
 
-        {visible.length === 0 ? (
-          <p className="py-12 text-center text-neutral-500">Nenhum produto encontrado.</p>
-        ) : (
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-            {visible.map((p) => (
-              <article key={p.id} className="flex flex-col overflow-hidden rounded-xl border bg-white">
-                <div className="relative aspect-square bg-neutral-100">
-                  {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} className="h-full w-full object-contain" loading="lazy" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-4xl">📦</div>
-                  )}
-                  {(isPromo(p) || p.badge) && <span className="absolute left-2 top-2 rounded bg-red-600 px-2 py-0.5 text-xs font-bold text-white">{p.badge || "PROMO"}</span>}
-                </div>
-                <div className="flex flex-1 flex-col gap-1 p-3">
-                  <h3 className="text-sm font-semibold leading-tight">{p.name}</h3>
-                  <div className="mt-auto pt-2">
-                    {isPromo(p) && <span className="mr-1 text-xs text-neutral-400 line-through">{brl(p.price)}</span>}
-                    <span className="font-display text-lg font-extrabold text-brand-dark">{brl(finalPrice(p))}</span>
-                  </div>
-                  <button className="btn-primary mt-2" onClick={() => add(p.id)}>Adicionar</button>
-                </div>
-              </article>
-            ))}
+        <section className="cut flex flex-col items-start justify-between gap-3 border border-brand/50 bg-brand-soft p-5 sm:flex-row sm:items-center">
+          <div>
+            <h2 className="title text-3xl text-brand">Monte seu kit</h2>
+            <p className="text-sm text-neutral-300">Escolha 2 ou mais produtos e veja o desconto aparecer na hora.</p>
           </div>
-        )}
+          <button className="btn-primary" onClick={() => setPanel("kit")}>Montar meu kit</button>
+        </section>
+
+        <section aria-labelledby="catalog">
+          <h2 id="catalog" className="title mb-3 text-3xl">Produtos</h2>
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row">
+            <input className="input sm:max-w-xs" placeholder="Buscar produto…" value={query} onChange={(e) => setQuery(e.target.value)} />
+            <div className="flex flex-wrap gap-2">
+              {categories.map((c) => <button key={c} onClick={() => setCategory(c)} className={`chip ${category === c ? "chip-on" : ""}`}>{c}</button>)}
+              <button onClick={() => setOnlyPromo(!onlyPromo)} className={`chip ${onlyPromo ? "chip-on" : ""}`}>Só promoções</button>
+            </div>
+          </div>
+          {visible.length === 0 ? (
+            <p className="py-12 text-center text-neutral-400">Nenhum produto com esses filtros. Limpe a busca ou o objetivo.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+              {visible.map((p) => <ProductCard key={p.id} p={p} now={now} onAdd={() => add(p.id)} />)}
+            </div>
+          )}
+        </section>
       </main>
 
-      <footer className="py-8 text-center text-xs text-neutral-400">
+      <footer className="py-8 text-center text-xs text-neutral-500">
         © {settings.storeName} · <a href="#/admin" className="underline">Área do dono</a>
       </footer>
 
-      {open && <CartDrawer products={products} settings={settings} cart={cart} setCart={setCart} onClose={() => setOpen(false)} />}
-    </div>
-  );
-}
-
-function CartDrawer({ products, settings, cart, setCart, onClose }: Props & { onClose: () => void }) {
-  const [c, setC] = useState<Customer>({ name: "", delivery: "retirada", address: "", notes: "" });
-  const lines = cart.filter((l) => products.some((p) => p.id === l.productId && p.active));
-  const total = lines.reduce((s, l) => s + finalPrice(products.find((p) => p.id === l.productId)!) * l.qty, 0);
-  const setQty = (id: string, qty: number) => setCart(cart.flatMap((l) => (l.productId !== id ? [l] : qty > 0 ? [{ ...l, qty }] : [])));
-  const valid = lines.length > 0 && c.name.trim() && (c.delivery === "retirada" || c.address.trim());
-
-  const send = () => {
-    window.open(whatsappUrl(settings.whatsapp, buildOrderMessage(settings, lines, products, c)), "_blank");
-  };
-
-  return (
-    <div className="fixed inset-0 z-20 flex justify-end bg-black/40" onClick={onClose}>
-      <aside className="flex h-full w-full max-w-md flex-col bg-white" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between border-b p-4">
-          <h2 className="font-display text-lg font-bold">Seu pedido</h2>
-          <button onClick={onClose} aria-label="Fechar">✕</button>
-        </div>
-        <div className="flex-1 space-y-4 overflow-y-auto p-4">
-          {lines.length === 0 && <p className="text-neutral-500">Seu pedido está vazio.</p>}
-          {lines.map((l) => {
-            const p = products.find((x) => x.id === l.productId)!;
-            return (
-              <div key={l.productId} className="flex items-center justify-between gap-2 text-sm">
-                <div className="min-w-0">
-                  <div className="truncate font-medium">{p.name}</div>
-                  <div className="text-neutral-500">{brl(finalPrice(p))}</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button className="btn-ghost !px-2.5 !py-1" onClick={() => setQty(l.productId, l.qty - 1)}>−</button>
-                  <span className="w-5 text-center">{l.qty}</span>
-                  <button className="btn-ghost !px-2.5 !py-1" onClick={() => setQty(l.productId, l.qty + 1)}>+</button>
-                </div>
-              </div>
-            );
-          })}
-          {lines.length > 0 && (
-            <div className="space-y-3 border-t pt-4">
-              <div><label className="label">Seu nome</label><input className="input" value={c.name} onChange={(e) => setC({ ...c, name: e.target.value })} /></div>
-              <div>
-                <label className="label">Recebimento</label>
-                <select className="input" value={c.delivery} onChange={(e) => setC({ ...c, delivery: e.target.value as Customer["delivery"] })}>
-                  <option value="retirada">Retirar na loja</option>
-                  <option value="entrega">Entrega</option>
-                </select>
-              </div>
-              {c.delivery === "entrega" && (
-                <div><label className="label">Endereço</label><input className="input" value={c.address} onChange={(e) => setC({ ...c, address: e.target.value })} /></div>
-              )}
-              <div><label className="label">Observações</label><textarea className="input" rows={2} value={c.notes} onChange={(e) => setC({ ...c, notes: e.target.value })} /></div>
-            </div>
-          )}
-        </div>
-        <div className="space-y-2 border-t p-4">
-          <div className="flex justify-between font-display text-lg font-bold"><span>Total</span><span>{brl(total)}</span></div>
-          <button className="btn-primary w-full" disabled={!valid} onClick={send}>Enviar pedido pelo WhatsApp</button>
-          <p className="text-center text-xs text-neutral-400">O pedido abre no WhatsApp da loja; o pagamento é combinado por lá.</p>
-        </div>
-      </aside>
+      {story != null && <StoryViewer items={highlights} start={story} now={now} onAdd={add} onClose={() => setStory(null)} />}
+      {panel === "kit" && (
+        <KitBuilder products={active} settings={settings} now={now} initial={cart} onClose={() => setPanel(null)}
+          onConfirm={(lines) => { setCart([...cart.filter((l) => !l.kit), ...lines]); setPanel("cart"); }} />
+      )}
+      {panel === "cart" && <Cart products={products} settings={settings} cart={cart} setCart={setCart} orders={orders} setOrders={setOrders} now={now} onClose={() => setPanel(null)} />}
     </div>
   );
 }

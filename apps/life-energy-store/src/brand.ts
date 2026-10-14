@@ -1,14 +1,25 @@
 import type { Settings } from "./types";
 
-/**
- * Valores padrão. O dono altera tudo isso pelo painel (/#/admin → Configurações).
- * WhatsApp da loja: +55 41 98480-4537.
- */
 export const defaultSettings: Settings = {
   storeName: "Life Energy Store",
   whatsapp: "5541984804537",
-  banner: "🔥 Promoções da semana — peça pelo WhatsApp!",
+  banner: "⚡ Promoções da semana — peça pelo WhatsApp",
   adminPin: "1234",
+  // Exemplo: o dono deve confirmar/ajustar estes percentuais em Configurações.
+  kitTiers: [
+    { items: 2, percent: 5 },
+    { items: 3, percent: 8 },
+    { items: 4, percent: 10 },
+  ],
 };
 
 export const CATEGORIES = ["Suplementos", "Vestuário", "Acessórios", "Bebidas e Snacks", "Outros"];
+
+export const GOALS = [
+  { id: "massa", label: "Ganhar massa", hint: "Whey, hipercalóricos, creatina" },
+  { id: "energia", label: "Energia no treino", hint: "Pré-treino, cafeína, carbo" },
+  { id: "definicao", label: "Definição", hint: "Termogênicos, proteínas leves" },
+  { id: "saude", label: "Saúde e rotina", hint: "Vitaminas, ômega, colágeno" },
+] as const;
+
+export const PAYMENTS = { pix: "Pix", cartao: "Cartão", dinheiro: "Dinheiro" } as const;
