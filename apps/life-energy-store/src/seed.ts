@@ -1,10 +1,22 @@
 import type { Product } from "./types";
 
-/** Produtos fictícios de demonstração (preços e nomes NÃO são os da loja real). */
+/**
+ * Catálogo inicial de exemplo. Só o kit Whey Test-Boost + Creatina vem de uma promoção real da loja;
+ * os demais itens e todos os preços marcados "(exemplo)" são fictícios, para o dono substituir pelo painel.
+ */
 export const seedProducts: Product[] = [
-  { id: "p1", name: "Whey Protein 900g (exemplo)", description: "Produto de demonstração.", category: "Suplementos", price: 149.9, promoPrice: 129.9, active: true },
-  { id: "p2", name: "Creatina 300g (exemplo)", description: "Produto de demonstração.", category: "Suplementos", price: 89.9, active: true },
-  { id: "p3", name: "Camiseta Dry Fit (exemplo)", description: "Produto de demonstração.", category: "Vestuário", price: 59.9, promoPrice: 44.9, active: true },
-  { id: "p4", name: "Garrafa 1L (exemplo)", description: "Produto de demonstração.", category: "Acessórios", price: 29.9, active: true },
-  { id: "p5", name: "Barra de Proteína (exemplo)", description: "Produto de demonstração.", category: "Bebidas e Snacks", price: 9.9, promoPrice: 7.9, active: true },
+  {
+    id: "kit-whey-creatina",
+    name: "Kit Whey Test-Boost 900g + Creatina Max 300g",
+    description: "Oferta imperdível: Whey Test-Boost 900g (sabor morango) + Creatina 300g com 50% de desconto.",
+    category: "Suplementos",
+    price: 139.95,
+    badge: "KIT PROMO",
+    imageUrl: "./promo/kit-whey-creatina.png",
+    active: true,
+  },
+  { id: "whey-a", name: "Whey A 900g (exemplo)", description: "Produto de demonstração.", category: "Suplementos", price: 129.9, active: true },
+  { id: "whey-b", name: "Whey B 900g (exemplo)", description: "Produto de demonstração.", category: "Suplementos", price: 159.9, promoPrice: 139.9, active: true },
+  { id: "creatina-a", name: "Creatina A 300g (exemplo)", description: "Produto de demonstração.", category: "Suplementos", price: 89.9, active: true },
+  { id: "pre-treino", name: "Pré-treino (exemplo)", description: "Produto de demonstração.", category: "Suplementos", price: 99.9, promoPrice: 84.9, active: true },
 ];

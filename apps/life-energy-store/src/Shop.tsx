@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { brl, finalPrice, isPromo } from "./store";
+import { brl, finalPrice, isHighlight, isPromo } from "./store";
 import type { CartLine, Customer, Product, Settings } from "./types";
 import { buildOrderMessage, whatsappUrl } from "./whatsapp";
 
@@ -18,11 +18,11 @@ export default function Shop({ products, settings, cart, setCart }: Props) {
 
   const active = products.filter((p) => p.active);
   const categories = useMemo(() => ["Todas", ...Array.from(new Set(active.map((p) => p.category)))], [active]);
-  const promos = active.filter(isPromo);
+  const promos = active.filter(isHighlight);
   const visible = active.filter(
     (p) =>
       (category === "Todas" || p.category === category) &&
-      (!onlyPromo || isPromo(p)) &&
+      (!onlyPromo || isHighlight(p)) &&
       p.name.toLowerCase().includes(query.toLowerCase()),
   );
 
@@ -37,7 +37,7 @@ export default function Shop({ products, settings, cart, setCart }: Props) {
       {settings.banner && <div className="bg-ink px-4 py-2 text-center text-sm text-white">{settings.banner}</div>}
       <header className="sticky top-0 z-10 border-b bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
-          <h1 className="font-display text-xl font-extrabold text-brand">{settings.storeName}</h1>
+          <h1 className="flex items-center gap-2"><img src="./brand/logo.png" alt={settings.storeName} className="h-10 w-10 rounded-md" /><span className="font-display text-lg font-extrabold">{settings.storeName}</span></h1>
           <button className="btn-primary" onClick={() => setOpen(true)}>
             🛒 Pedido ({count})
           </button>
@@ -59,11 +59,11 @@ export default function Shop({ products, settings, cart, setCart }: Props) {
           <input className="input sm:max-w-xs" placeholder="Buscar produto…" value={query} onChange={(e) => setQuery(e.target.value)} />
           <div className="flex flex-wrap gap-2">
             {categories.map((c) => (
-              <button key={c} onClick={() => setCategory(c)} className={`rounded-full border px-3 py-1 text-sm ${category === c ? "border-brand bg-brand text-white" : "bg-white"}`}>
+              <button key={c} onClick={() => setCategory(c)} className={`rounded-full border px-3 py-1 text-sm ${category === c ? "border-brand bg-brand text-black" : "bg-white"}`}>
                 {c}
               </button>
             ))}
-            <button onClick={() => setOnlyPromo(!onlyPromo)} className={`rounded-full border px-3 py-1 text-sm ${onlyPromo ? "border-brand bg-brand text-white" : "bg-white"}`}>
+            <button onClick={() => setOnlyPromo(!onlyPromo)} className={`rounded-full border px-3 py-1 text-sm ${onlyPromo ? "border-brand bg-brand text-black" : "bg-white"}`}>
               🔥 Promoções
             </button>
           </div>
@@ -77,11 +77,11 @@ export default function Shop({ products, settings, cart, setCart }: Props) {
               <article key={p.id} className="flex flex-col overflow-hidden rounded-xl border bg-white">
                 <div className="relative aspect-square bg-neutral-100">
                   {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover" loading="lazy" />
+                    <img src={p.imageUrl} alt={p.name} className="h-full w-full object-contain" loading="lazy" />
                   ) : (
                     <div className="flex h-full items-center justify-center text-4xl">📦</div>
                   )}
-                  {isPromo(p) && <span className="absolute left-2 top-2 rounded bg-red-600 px-2 py-0.5 text-xs font-bold text-white">PROMO</span>}
+                  {(isPromo(p) || p.badge) && <span className="absolute left-2 top-2 rounded bg-red-600 px-2 py-0.5 text-xs font-bold text-white">{p.badge || "PROMO"}</span>}
                 </div>
                 <div className="flex flex-1 flex-col gap-1 p-3">
                   <h3 className="text-sm font-semibold leading-tight">{p.name}</h3>

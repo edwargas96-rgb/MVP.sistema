@@ -51,7 +51,7 @@ export default function Admin({ products, setProducts, settings, setSettings }: 
       </div>
       <div className="mb-4 flex gap-2">
         {(["produtos", "config"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`rounded-full border px-4 py-1 text-sm ${tab === t ? "border-brand bg-brand text-white" : "bg-white"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`rounded-full border px-4 py-1 text-sm ${tab === t ? "border-brand bg-brand text-black" : "bg-white"}`}>
             {t === "produtos" ? "Produtos e promoções" : "Configurações"}
           </button>
         ))}
@@ -106,6 +106,7 @@ function ProductForm({ product, onSave, onCancel }: { product: Product; onSave: 
           <div><label className="label">Preço (R$)</label><input className="input" inputMode="decimal" value={p.price || ""} onChange={(e) => setP({ ...p, price: num(e.target.value) ?? 0 })} /></div>
           <div><label className="label">Preço promo (R$)</label><input className="input" inputMode="decimal" placeholder="opcional" value={p.promoPrice ?? ""} onChange={(e) => setP({ ...p, promoPrice: num(e.target.value) })} /></div>
         </div>
+        <div><label className="label">Selo (opcional, ex.: KIT PROMO)</label><input className="input" value={p.badge ?? ""} onChange={(e) => setP({ ...p, badge: e.target.value || undefined })} /></div>
         <div><label className="label">URL da imagem</label><input className="input" placeholder="https://…" value={p.imageUrl ?? ""} onChange={(e) => setP({ ...p, imageUrl: e.target.value || undefined })} /></div>
         <div><label className="label">Descrição</label><textarea className="input" rows={2} value={p.description} onChange={(e) => setP({ ...p, description: e.target.value })} /></div>
         <div className="flex justify-end gap-2 pt-2">

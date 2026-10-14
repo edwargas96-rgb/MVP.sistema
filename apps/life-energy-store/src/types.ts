@@ -7,6 +7,8 @@ export interface Product {
   price: number;
   /** Preço promocional; quando preenchido (e menor que price) o item é uma promoção. */
   promoPrice?: number;
+  /** Selo livre no cartão (ex.: "KIT PROMO"); sem preço riscado. */
+  badge?: string;
   imageUrl?: string;
   active: boolean;
 }

@@ -30,5 +30,6 @@ export const useSettings = () => usePersisted<Settings>("settings", defaultSetti
 export const useCart = () => usePersisted<CartLine[]>("cart", []);
 
 export const isPromo = (p: Product) => p.promoPrice != null && p.promoPrice > 0 && p.promoPrice < p.price;
+export const isHighlight = (p: Product) => isPromo(p) || !!p.badge;
 export const finalPrice = (p: Product) => (isPromo(p) ? (p.promoPrice as number) : p.price);
 export const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

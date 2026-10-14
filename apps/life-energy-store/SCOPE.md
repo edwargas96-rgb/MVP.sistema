@@ -1,7 +1,7 @@
 # Escopo — Life Energy Store
 
 ## Ponto de partida e limitações da análise
-Os sites de referência (academialifeenergy.com.br/unidades e Instagram @lifeenergystore) **não puderam ser acessados** do ambiente em que isto foi construído (rede bloqueada). Nada aqui foi copiado deles: nome, cores (laranja/preto), categorias e produtos são **placeholders** de demonstração. Pendente do cliente: logo, paleta oficial, número de WhatsApp real, catálogo real, unidades/endereços.
+Os sites de referência (academialifeenergy.com.br/unidades e Instagram @lifeenergystore) **não puderam ser acessados** do ambiente em que isto foi construído (rede bloqueada). Nada aqui foi copiado deles: nome, cores (preto/amarelo, da logo), categorias e produtos são **placeholders** de demonstração. Pendente do cliente: logo, paleta oficial, número de WhatsApp real, catálogo real, unidades/endereços.
 
 ## Objetivo
 Um lugar onde o dono publica produtos e promoções, e o cliente monta o pedido e o envia direto para o WhatsApp da loja.
