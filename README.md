@@ -11,6 +11,7 @@ Cada aplicativo é uma marca independente, com sua própria configuração visua
   /lv-laboratorio   → LV Laboratório Dental (Caxias do Sul/RS)
   /dlab-digital     → DLAB DIGITAL (Curitiba/PR)
   /ultra-dental     → Ultra Dental Lab (Maringá/PR)
+  /life-energy-store → Life Energy Store (loja de promoções com pedido via WhatsApp; projeto à parte, ver SCOPE.md)
 /packages
   /ui               → componentes, páginas, contexto de marca e motor de dados compartilhados
 ```

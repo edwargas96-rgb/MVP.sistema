@@ -13,6 +13,8 @@
     "build:lv": "npm run build -w apps/lv-laboratorio",
     "build:dlab": "npm run build -w apps/dlab-digital",
     "build:ultra": "npm run build -w apps/ultra-dental",
-    "build:all": "npm run build -w apps/lv-laboratorio && npm run build -w apps/dlab-digital && npm run build -w apps/ultra-dental"
+    "build:all": "npm run build -w apps/lv-laboratorio && npm run build -w apps/dlab-digital && npm run build -w apps/ultra-dental && npm run build -w apps/life-energy-store",
+    "dev:life": "npm run dev -w apps/life-energy-store",
+    "build:life": "npm run build -w apps/life-energy-store"
   }
 }
