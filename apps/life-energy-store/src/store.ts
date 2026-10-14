@@ -25,7 +25,7 @@ function usePersisted<T>(key: string, initial: T, revive: (stored: T) => T = (v)
   return [value, setValue] as const;
 }
 
-export const useProducts = () => usePersisted<Product[]>("products-v2", seedProducts);
+export const useProducts = () => usePersisted<Product[]>("products-v3", seedProducts);
 export const useSettings = () => usePersisted<Settings>("settings", defaultSettings, (s) => ({ ...defaultSettings, ...s }));
 export const useCart = () => usePersisted<CartLine[]>("cart", []);
 export const useOrders = () => usePersisted<Order[]>("orders", []);

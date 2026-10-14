@@ -54,7 +54,7 @@ export function StoryViewer({ items, start, now, onAdd, onClose }: { items: Prod
         </div>
         <button onClick={onClose} aria-label="Fechar" className="absolute right-3 top-7 z-10 rounded-full bg-black/60 px-3 py-1 text-lg">✕</button>
         <div className="flex-1 overflow-hidden bg-steel/30">
-          {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="h-full w-full object-contain" /> : <div className="flex h-full items-center justify-center text-8xl">⚡</div>}
+          {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="h-full w-full object-contain" /> : <div className="flex h-full flex-col items-center justify-center gap-4 bg-gradient-to-b from-brand-soft to-ink p-8 text-center"><img src="./brand/logo.png" alt="" className="h-24 w-24 rounded-xl" />{p.badge && <span className="title bg-alert px-3 py-1.5 text-3xl text-white">{p.badge}</span>}</div>}
         </div>
         <button aria-label="Anterior" className="absolute inset-y-16 left-0 w-1/3" onClick={prev} />
         <button aria-label="Próximo" className="absolute inset-y-16 right-0 w-1/3" onClick={next} />
